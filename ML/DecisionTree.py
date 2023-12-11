@@ -91,8 +91,18 @@ def decisionTreeUtilizingScikit(data_path):
     #for i in range (0,len(y_test_list)):
     #    print(y_test_list[i]+" vs "+y_pred_list[i])
 
-    # Model Accuracy, how often is the classifier correct?
-    print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+    ################################### Calculate Performance Metrics ###################################################
+    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\PerformanceMetrics.txt'
+    # Wipe the content of the preformance metrics file which is the result of the previous execution:
+    with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+        FileWritten.write("")
+    # Open the file in which the performance metrics will be written in append mode:
+    with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+        # Model Accuracy, how often is the classifier correct?
+        FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
+        FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
+        FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
+        FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
 
     # Visualize the used decision tree:
     dot_data = StringIO()
@@ -100,11 +110,11 @@ def decisionTreeUtilizingScikit(data_path):
                 filled=True, rounded=True,
                 special_characters=True,feature_names = field_names[0:-1],class_names=['ADHD_negative','ADHD_positive'])
     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-    graph.write_png('decisionTree.png')
+    graph.write_png(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\decisionTreeParent.png')
     Image(graph.create_png())
 
 def main():
-    decisionTreeUtilizingScikit("ConnersParentData.csv")
+    decisionTreeUtilizingScikit(r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
 
 if __name__ == "__main__":
     main()
