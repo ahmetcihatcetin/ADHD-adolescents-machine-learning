@@ -11,6 +11,9 @@ from six import StringIO
 from IPython.display import Image  
 import pydotplus
 
+# Import necessary libraries for plotting the ROC Curve:
+import seaborn.objects
+
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                     "2. Büyüklere karşı arsız ve küstah davranır.",
                                     "3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
@@ -120,7 +123,7 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
     
     # Create Decision Tree classifer object
-    classifierObject = DecisionTreeClassifier()
+    classifierObject = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)
     # Train Decision Tree Classifer
     classifierObject = classifierObject.fit(X_train,y_train)
     #Predict the response for test dataset
@@ -145,6 +148,16 @@ def decisionTreeUtilizingScikit(data_type,data_path):
         FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
         FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
         FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
+        probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+        probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]
+        
+    # GENERATE DATA FOR 45-DEGREE LINE
+    noskill_probabilities = [0 for number in range(len(y_test))]
+    #print(probabilitiesOfClasses_pos_class)
+    falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+    falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
+    myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+    myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ROC_Curve.png')
 
     # Visualize the used decision tree:
     dot_data = StringIO()
@@ -156,8 +169,8 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     Image(graph.create_png())
 
 def main():
-    #decisionTreeUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
-    decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
+    decisionTreeUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
+    #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
     main()
