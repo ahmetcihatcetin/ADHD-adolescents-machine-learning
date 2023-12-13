@@ -136,7 +136,7 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     #for i in range (0,len(y_test_list)):
     #    print(y_test_list[i]+" vs "+y_pred_list[i])
 
-    ################################### Calculate Performance Metrics ###################################################
+    ################################### Calculate Performance Metrics #######################################################
     performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\PerformanceMetrics' + data_type_string + '.txt'
     # Wipe the content of the preformance metrics file which is the result of the previous execution:
     with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
@@ -148,16 +148,23 @@ def decisionTreeUtilizingScikit(data_type,data_path):
         FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
         FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
         FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
-        probabilitiesOfClasses = classifierObject.predict_proba(X_test)
-        probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]
         
-    # GENERATE DATA FOR 45-DEGREE LINE
+    # Plot ROC Curve:
+    # Predict probabilities for the test set:
+    probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+    # Keep probablities for only the positive outcome: ADHD_positive
+    probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+    # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
     noskill_probabilities = [0 for number in range(len(y_test))]
-    #print(probabilitiesOfClasses_pos_class)
-    falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+    # Calculate the related data which are false positive rate and true positive rate for the test set:
     falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
+    # Calculate the related data for 45-degrees line:
+    falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+    # Plot the ROC Curve with a 45-degrees line as a reference by utilizing seaborn objects library:
     myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+    # Save the plot on PNG file:
     myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ROC_Curve.png')
+    ################################### Calculate Performance Metrics END ###################################################
 
     # Visualize the used decision tree:
     dot_data = StringIO()
