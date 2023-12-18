@@ -1,0 +1,8 @@
+# Ignore Visual Studio Code specific files:
+settings.json
+# Ignore all CSV files (the data):
+*.csv
+# Ignore PNG files:
+*.png
+# Ignore Metrics files:
+PerformanceMetrics*.txt
