@@ -2,7 +2,7 @@
 settings.json
 # Ignore all CSV files (the data):
 *.csv
-# Ignore PNG files:
-*.png
+# Ignore PNG files inside of the 'Data' folder since they are created locally at each run anyway:
+/Data/*.png
 # Ignore Metrics files:
 PerformanceMetrics*.txt
