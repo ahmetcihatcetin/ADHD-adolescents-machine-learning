@@ -107,7 +107,7 @@ for field in field_names_for_parent_data:
 for field in field_names_for_teacher_data:
     field.encode()
 
-def randomForestUtilizingScikit(data_type,data_path):
+def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
     # Initialize the data_type specific variables:
     if data_type == 'parent':
         # Determine the correct field names for Parent:
@@ -131,10 +131,38 @@ def randomForestUtilizingScikit(data_type,data_path):
     # Split dataset into training set and test set
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2) # 80% training and 20% test
 
+    ####### Hyper-parameter Tuning ######################################################
+    
+    if hyper_parameter_tuning:
+        # Create dictionary for the hyper parameters which we want to optimize:
+        param_dist = {  'n_estimators': randint(50,500),    # the total number of decision trees to be used in the model
+                        'max_depth': randint(1,20)}         # The max depth for each deicison tree in the model
+                                                            # randint uses a random sampling of a uniform distribution within the range provided.
+    
+        # Create a random forest classifier which we'll be used for optimization:
+        randomForestModel = RandomForestClassifier()
+
+        # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+        rand_search = RandomizedSearchCV(randomForestModel, 
+                                        param_distributions = param_dist,       
+                                        n_iter=5,                               # Number of parameter settings that are sampled.
+                                        cv=5)                                   # The number of cross-validation folds to be used.
+
+        # Fit the random search object to the data:
+        rand_search.fit(X_train, y_train)
+
+        # Create a variable for the best model:
+        bestModelHypertuned = rand_search.best_estimator_
+
+        # Print the best values for the hyperparameters:
+        print('Best hyperparameters:',  rand_search.best_params_)
+
+    ####### END OF Hyper-parameter Tuning ###############################################
+
     # Create Random Forest classifer object
-    classifierObject = RandomForestClassifier()
+    classifierObject = bestModelHypertuned
     # Train Random Forest Classifer:
-    classifierObject = classifierObject.fit(X_train,y_train)
+    #classifierObject = classifierObject.fit(X_train,y_train)       # No need to fit the model to the training data again since it has been fitted during hyper-tuning.
     #Predict the response for test dataset
     y_pred = classifierObject.predict(X_test)
 
@@ -181,7 +209,7 @@ def randomForestUtilizingScikit(data_type,data_path):
         Image(graph.create_png())
 
 def main():
-    randomForestUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
+    randomForestUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True)
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
