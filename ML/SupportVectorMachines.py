@@ -126,7 +126,7 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
     ####### END OF Hyper-parameter Tuning ###############################################
 
     # Create SVM classifier object:
-    classifierObject = svm.SVC(kernel='linear')
+    classifierObject = svm.SVC(kernel='rbf', gamma='auto')
 
     # Train SVM classifier:
     classifierObject.fit(X_train, y_train)
