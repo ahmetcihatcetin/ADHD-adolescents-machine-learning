@@ -6,6 +6,9 @@ import pandas as pd
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 
+# Modules for Hyper-parameter Tuning:
+from sklearn.model_selection import GridSearchCV
+
 # Modules for Performance Metrics:
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -123,13 +126,32 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
 
     ####### Hyper-parameter Tuning ######################################################
+    if hyper_parameter_tuning:
+        # Create dictionary for the hyper parameters which we want to optimize:
+        hyperParameters = {'C':         [0.1,1, 10, 100], 
+                           'gamma':     [1,0.1,0.01,0.001],
+                           'kernel':    ['rbf', 'poly', 'sigmoid']}
+        # Create a SVM classifier which we'll be used for optimization:
+        supportVectorMachineModel = svm.SVC()
+        # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+        grid_search = GridSearchCV(supportVectorMachineModel,hyperParameters,refit=True,verbose=2)                                 # The number of cross-validation folds to be used.
+        # Fit the random search object to the data:
+        grid_search.fit(X_train, y_train)
+        # Create a variable for the best model:
+        bestModelHypertuned = grid_search.best_estimator_
+        # Print the best values for the hyperparameters:
+        print('Best hyperparameters:',  grid_search.best_params_)
     ####### END OF Hyper-parameter Tuning ###############################################
 
     # Create SVM classifier object:
-    classifierObject = svm.SVC(kernel='rbf', gamma='auto')
+    if hyper_parameter_tuning:
+        classifierObject = bestModelHypertuned
+    else:
+        classifierObject = svm.SVC(kernel='rbf', gamma='auto')
 
     # Train SVM classifier:
-    classifierObject.fit(X_train, y_train)
+    if not hyper_parameter_tuning:                  # No need to train again a hyper-parameter-tuned model since it has alreay been trained during tuning:
+        classifierObject.fit(X_train, y_train)
 
     # Predict the labels for test dataset:
     y_pred = classifierObject.predict(X_test)
@@ -152,7 +174,7 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
     ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'ConfusionMatrix' + '.png')
 
 def main():
-    supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False)
+    supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True)
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
