@@ -1,23 +1,25 @@
-# Import Libraries/Modules
+### Import Libraries/Modules
 # Data Analysis & Manipulation:
 import pandas as pd
-import numpy as np
 
 # Machine Learning Modules:
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
-from scipy.stats import randint
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+
+# Modules for Hyper-parameter Tuning:
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
+from scipy.stats import uniform
+from numpy import logspace
 
 # Modules for Performance Metrics:
-from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
-import matplotlib.pyplot
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Modules for the Visualisation of the Decision Trees:
-from sklearn.tree import export_graphviz
-from IPython.display import Image
-import pydotplus
-from six import StringIO
+# Modules for Permutation Feature Importance:
+from sklearn.inspection import permutation_importance
+import matplotlib.pyplot
+import numpy
 
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                     "2. Büyüklere karşı arsız ve küstah davranır.",
@@ -107,7 +109,7 @@ for field in field_names_for_parent_data:
 for field in field_names_for_teacher_data:
     field.encode()
 
-def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
+def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tuning=False, search_type=None):
     # Initialize the data_type specific variables:
     if data_type == 'parent':
         # Determine the correct field names for Parent:
@@ -119,7 +121,7 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
         field_names = field_names = field_names_for_teacher_data
         # Assign the data_type specific string for the file paths:
         data_type_string = 'Teacher'
-
+    
     # load dataset:
     dataFrame = pd.read_csv(data_path, header=None, names=field_names)
 
@@ -129,46 +131,60 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
     y = dataFrame["Label"]                      # y is in the type of pandas.Series is a one-dimensional ndarray with axis labels
 
     # Split dataset into training set and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2) # 80% training and 20% test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
 
     ####### Hyper-parameter Tuning ######################################################
-    
     if hyper_parameter_tuning:
-        # Create dictionary for the hyper parameters which we want to optimize:
-        param_dist = {  'n_estimators': randint(50,500),    # the total number of decision trees to be used in the model
-                        'max_depth': randint(1,20)}         # The max depth for each deicison tree in the model
-                                                            # randint uses a random sampling of a uniform distribution within the range provided.
-    
-        # Create a random forest classifier which we'll be used for optimization:
-        randomForestModel = RandomForestClassifier()
+        if search_type == 'randomized': ### Tuning with Randomized Search ##############
+            # Create dictionary for the hyper parameters which we want to optimize:
+            hyperParameters = {'C':         uniform(0.1, 10), 
+                               'gamma':     ['scale', 'auto'] + list(logspace(-3, 3, 50)),
+                               'kernel':    ['linear', 'rbf', 'poly', 'sigmoid']}
+            # Create a SVM classifier which we'll be used for optimization:
+            supportVectorMachineModel = svm.SVC()
+            # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+            randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=20, cv=5)
 
-        # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
-        rand_search = RandomizedSearchCV(randomForestModel, 
-                                        param_distributions = param_dist,       
-                                        n_iter=5,                               # Number of parameter settings that are sampled.
-                                        cv=5)                                   # The number of cross-validation folds to be used.
-
-        # Fit the random search object to the data:
-        rand_search.fit(X_train, y_train)
-
-        # Create a variable for the best model:
-        bestModelHypertuned = rand_search.best_estimator_
-
-        # Print the best values for the hyperparameters:
-        print('Best hyperparameters:',  rand_search.best_params_)
-
+            # Fit the random search object to the data:
+            randomized_search.fit(X_train, y_train)
+            # Create a variable for the best model:
+            bestModelHypertuned = randomized_search.best_estimator_
+            # Print the best values for the hyperparameters:
+            print('Best hyperparameters:',  randomized_search.best_params_)
+            
+        else:       #################################### Tuning with Grid Search #######
+            # Create dictionary for the hyper parameters which we want to optimize:
+            hyperParameters = {'C':         [0.1,1, 10, 100], 
+                               'gamma':     [1,0.1,0.01,0.001],
+                               'kernel':    ['rbf', 'poly', 'sigmoid']}
+            # Create a SVM classifier which we'll be used for optimization:
+            supportVectorMachineModel = svm.SVC()
+            # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+            grid_search = GridSearchCV(supportVectorMachineModel,hyperParameters,refit=True,verbose=2)                                 # The number of cross-validation folds to be used.
+            # Fit the random search object to the data:
+            grid_search.fit(X_train, y_train)
+            # Create a variable for the best model:
+            bestModelHypertuned = grid_search.best_estimator_
+            # Print the best values for the hyperparameters:
+            print('Best hyperparameters:',  grid_search.best_params_)
     ####### END OF Hyper-parameter Tuning ###############################################
 
-    # Create Random Forest classifer object
-    classifierObject = bestModelHypertuned
-    # Train Random Forest Classifer:
-    #classifierObject = classifierObject.fit(X_train,y_train)       # No need to fit the model to the training data again since it has been fitted during hyper-tuning.
-    #Predict the response for test dataset
+    # Create SVM classifier object:
+    if hyper_parameter_tuning:
+        classifierObject = bestModelHypertuned
+    else:
+        classifierObject = svm.SVC(kernel='rbf', gamma='auto')
+
+    # Train SVM classifier:
+    if not hyper_parameter_tuning:                  # No need to train again a hyper-parameter-tuned model since it has alreay been trained during tuning:
+        classifierObject.fit(X_train, y_train)
+
+    # Predict the labels for test dataset:
     y_pred = classifierObject.predict(X_test)
 
     ################################### Calculate Performance Metrics #######################################################
     ### Calculate numeric performance metrics and write them into the file with the path of performanceMetricsFilePath:
-    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\PerformanceMetrics' + data_type_string + '.txt'
+    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\PerformanceMetrics' + data_type_string + '.txt'
     # Wipe the content of the preformance metrics file which is the result of the previous execution:
     with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
         FileWritten.write("")
@@ -181,36 +197,29 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
         FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
     ###### Create the confusion matrix:
     confusionMatrix = confusion_matrix(y_test,y_pred)
-    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'ConfusionMatrix' + '.png')
-    ###### Plot the Importance of each Feature:
-    # Gini-based:
-    feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
-    sorted_idx = np.argsort(feature_importance)                                 # Perform an indirect quicksort on the feature importances ndarray
-    fig = matplotlib.pyplot.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
-    matplotlib.pyplot.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
-    matplotlib.pyplot.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
-    matplotlib.pyplot.title('Feature Importance', fontsize=20)
+    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'ConfusionMatrix' + '.png')
+    ###### Permutation Feature Importance:
+    # Permutation feature importance is defined as "the difference between the baseline metric and metric from permutating the feature column".
+    # It is used for non-linear kernels!!!
+    perm_importance = permutation_importance(classifierObject, X, y)        # Returns a Dictionary-like object. 
+    # Normalize the feature importances such that the sum of all feature importances is 1.0, therefore the feature importances can be understood as percentages:
+    perm_importance_normalized = perm_importance.importances_mean/perm_importance.importances_mean.sum()
+    # Organize features for the plot:
+    feature_names = X.columns
+    features = numpy.array(feature_names)
+    # Sort to plot in the order of importance:
+    sorted_idx = perm_importance_normalized.argsort()
+    # Plot:
+    fig = matplotlib.pyplot.figure(figsize=(16, 16), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
+    matplotlib.pyplot.title('Permutation Feature Importance',fontsize=20)
+    matplotlib.pyplot.barh(features[sorted_idx], perm_importance_normalized[sorted_idx], color='b', align='center')
     matplotlib.pyplot.xlabel('Relative Importance to the Model', fontsize=15)
-    matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'FeatureImportance' + '.png')
-    ################################### Calculate Performance Metrics END ###################################################
-
-    # Visualize the first 3 Decision Trees from the Forest:
-    for i in range(3):
-        tree = classifierObject.estimators_[i]
-        dot_data = StringIO()
-        export_graphviz(tree, out_file=dot_data,
-                                   feature_names = field_names[0:-1],
-                                   class_names=['ADHD_negative','ADHD_positive'],  
-                                   filled=True,  
-                                   max_depth=3, 
-                                   impurity=False, 
-                                   proportion=True)
-        graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-        graph.write_png(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'DecisionTree' + str(i) + '.png')
-        Image(graph.create_png())
+    matplotlib.pyplot.xticks(fontsize=15)
+    matplotlib.pyplot.yticks(fontsize=15)
+    matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'PermutationFeatureImportance' + '.png')
 
 def main():
-    randomForestUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True)
+    supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True, search_type='randomized')
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
