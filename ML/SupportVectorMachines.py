@@ -16,6 +16,11 @@ from numpy import logspace
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
+# Modules for Permutation Feature Importance:
+from sklearn.inspection import permutation_importance
+import matplotlib.pyplot
+import numpy
+
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                     "2. Büyüklere karşı arsız ve küstah davranır.",
                                     "3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
@@ -193,6 +198,25 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
     ###### Create the confusion matrix:
     confusionMatrix = confusion_matrix(y_test,y_pred)
     ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'ConfusionMatrix' + '.png')
+    ###### Permutation Feature Importance:
+    # Permutation feature importance is defined as "the difference between the baseline metric and metric from permutating the feature column".
+    # It is used for non-linear kernels!!!
+    perm_importance = permutation_importance(classifierObject, X, y)        # Returns a Dictionary-like object. 
+    # Normalize the feature importances such that the sum of all feature importances is 1.0, therefore the feature importances can be understood as percentages:
+    perm_importance_normalized = perm_importance.importances_mean/perm_importance.importances_mean.sum()
+    # Organize features for the plot:
+    feature_names = X.columns
+    features = numpy.array(feature_names)
+    # Sort to plot in the order of importance:
+    sorted_idx = perm_importance_normalized.argsort()
+    # Plot:
+    fig = matplotlib.pyplot.figure(figsize=(16, 16), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
+    matplotlib.pyplot.title('Permutation Feature Importance',fontsize=20)
+    matplotlib.pyplot.barh(features[sorted_idx], perm_importance_normalized[sorted_idx], color='b', align='center')
+    matplotlib.pyplot.xlabel('Relative Importance to the Model', fontsize=15)
+    matplotlib.pyplot.xticks(fontsize=15)
+    matplotlib.pyplot.yticks(fontsize=15)
+    matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'PermutationFeatureImportance' + '.png')
 
 def main():
     supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True, search_type='randomized')

@@ -189,7 +189,8 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning):
     fig = matplotlib.pyplot.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
     matplotlib.pyplot.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
     matplotlib.pyplot.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
-    matplotlib.pyplot.title('Feature Importance')
+    matplotlib.pyplot.title('Feature Importance', fontsize=20)
+    matplotlib.pyplot.xlabel('Relative Importance to the Model', fontsize=15)
     matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'FeatureImportance' + '.png')
     ################################### Calculate Performance Metrics END ###################################################
 
