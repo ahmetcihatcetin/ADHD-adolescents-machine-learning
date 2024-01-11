@@ -12,6 +12,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Import necessary libraries for plotting the ROC Curve:
 import seaborn.objects
+import matplotlib.pyplot as plt
 
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                     "2. Büyüklere karşı arsız ve küstah davranır.",
@@ -159,20 +160,13 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     confusionMatrix = confusion_matrix(y_test,y_pred)
     ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ConfusionMatrix' + data_type_string + '.png')
     ###### Plot the ROC Curve:
-    # Predict probabilities for the test set:
-    probabilitiesOfClasses = classifierObject.predict_proba(X_test)
-    # Keep probablities for only the positive outcome: ADHD_positive
-    probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
-    # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
-    noskill_probabilities = [0 for number in range(len(y_test))]
-    # Calculate the related data which are false positive rate and true positive rate for the test set:
-    falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
-    # Calculate the related data for 45-degrees line:
-    falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
-    # Plot the ROC Curve with a 45-degrees line as a reference by utilizing seaborn objects library:
-    myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
-    # Save the plot on PNG file:
-    myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ROC_Curve' + data_type_string + '.png')
+    y_pred_proba = classifierObject.predict_proba(X_test)[::,1]
+    fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba, pos_label='ADHD_positive')
+    auc = metrics.roc_auc_score(y_test, y_pred_proba)
+    plt.figure(2)
+    plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+    plt.legend(loc=4)
+    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ROC_Curve' + data_type_string + '.png')
     ################################### END OF Performance Metrics #########################################################
 
 def main():
