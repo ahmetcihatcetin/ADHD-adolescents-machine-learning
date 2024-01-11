@@ -6,6 +6,12 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
+# Modules for Hyper-parameter Tuning:
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
+from numpy import arange
+from numpy import logspace
+
 # Modules for Performance Metrics:
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -127,12 +133,46 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30) # 70% training and 30% test
 
     ####### Hyper-parameter Tuning ######################################################
+    if hyper_parameter_tuning:
+        if search_type == 'randomized': ### Tuning with Randomized Search ##############
+            # Create dictionary for the hyper parameters which we want to optimize:
+            hyperParameters = {'C':             arange(0, 1, 0.01), 
+                               'max_iter':      range(100, 500),
+                               'warm_start':    [True, False],
+                               'solver':        ['lbfgs','newton-cg','liblinear','sag','saga']}
+            # Create a classifier which will be used for optimization:
+            supportVectorMachineModel = LogisticRegression()
+            # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+            randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=100, scoring = 'accuracy', n_jobs=-1, verbose=1, random_state=1)
+
+            # Fit the random search object to the data:
+            randomized_search.fit(X_train, y_train)
+            # Create a variable for the best model:
+            bestModelHypertuned = randomized_search.best_estimator_
+            # Print the best values for the hyperparameters:
+            print('Best hyperparameters:',  randomized_search.best_params_)
+            
+        else:       #################################### Tuning with Grid Search #######
+            # Create dictionary for the hyper parameters which we want to optimize:
+            hyperParameters = {'C':             logspace(-4, 4, 20), 
+                               'max_iter' :     [100, 1000, 2500, 5000],
+                               'warm_start':    [True, False],
+                               'solver' :       ['lbfgs','newton-cg','liblinear','sag','saga']}
+            # Create a classifier which will be used for optimization:
+            supportVectorMachineModel = LogisticRegression()
+            # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
+            grid_search = GridSearchCV(supportVectorMachineModel, hyperParameters, cv=3, verbose=True, n_jobs=-1)
+            # Fit the random search object to the data:
+            grid_search.fit(X_train, y_train)
+            # Create a variable for the best model:
+            bestModelHypertuned = grid_search.best_estimator_
+            # Print the best values for the hyperparameters:
+            print('Best hyperparameters:',  grid_search.best_params_)
     ####### END OF Hyper-parameter Tuning ###############################################
 
     # Create Logistic Regression classifier object:
     if hyper_parameter_tuning:
-        #classifierObject = bestModelHypertuned
-        pass
+        classifierObject = bestModelHypertuned
     else:
         classifierObject = LogisticRegression()
     
@@ -170,7 +210,7 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     ################################### END OF Performance Metrics #########################################################
 
 def main():
-    logisticRegressionUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type=None)
+    logisticRegressionUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
