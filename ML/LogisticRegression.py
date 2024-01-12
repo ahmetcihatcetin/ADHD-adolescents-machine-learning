@@ -3,23 +3,22 @@
 import pandas as pd
 
 # Machine Learning Modules:
-from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 # Modules for Hyper-parameter Tuning:
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GridSearchCV
-from scipy.stats import uniform
+from numpy import arange
 from numpy import logspace
 
 # Modules for Performance Metrics:
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Modules for Permutation Feature Importance:
-from sklearn.inspection import permutation_importance
-import matplotlib.pyplot
-import numpy
+# Import necessary libraries for plotting the ROC Curve:
+import seaborn.objects
+import matplotlib.pyplot as plt
 
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                     "2. Büyüklere karşı arsız ve küstah davranır.",
@@ -109,7 +108,7 @@ for field in field_names_for_parent_data:
 for field in field_names_for_teacher_data:
     field.encode()
 
-def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tuning=False, search_type=None):
+def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuning=False, search_type=None):
     # Initialize the data_type specific variables:
     if data_type == 'parent':
         # Determine the correct field names for Parent:
@@ -131,19 +130,20 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
     y = dataFrame["Label"]                      # y is in the type of pandas.Series is a one-dimensional ndarray with axis labels
 
     # Split dataset into training set and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30) # 70% training and 30% test
 
     ####### Hyper-parameter Tuning ######################################################
     if hyper_parameter_tuning:
         if search_type == 'randomized': ### Tuning with Randomized Search ##############
             # Create dictionary for the hyper parameters which we want to optimize:
-            hyperParameters = {'C':         uniform(0.1, 10), 
-                               'gamma':     ['scale', 'auto'] + list(logspace(-3, 3, 50)),
-                               'kernel':    ['linear', 'rbf', 'poly', 'sigmoid']}
-            # Create a SVM classifier which will be used for optimization:
-            supportVectorMachineModel = svm.SVC()
+            hyperParameters = {'C':             arange(0, 1, 0.01), 
+                               'max_iter':      range(100, 500),
+                               'warm_start':    [True, False],
+                               'solver':        ['lbfgs','newton-cg','liblinear','sag','saga']}
+            # Create a classifier which will be used for optimization:
+            supportVectorMachineModel = LogisticRegression()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
-            randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=20, cv=5)
+            randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=100, scoring = 'accuracy', n_jobs=-1, verbose=1, random_state=1)
 
             # Fit the random search object to the data:
             randomized_search.fit(X_train, y_train)
@@ -154,13 +154,14 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             
         else:       #################################### Tuning with Grid Search #######
             # Create dictionary for the hyper parameters which we want to optimize:
-            hyperParameters = {'C':         [0.1,1, 10, 100], 
-                               'gamma':     [1,0.1,0.01,0.001],
-                               'kernel':    ['rbf', 'poly', 'sigmoid']}
-            # Create a SVM classifier which will be used for optimization:
-            supportVectorMachineModel = svm.SVC()
+            hyperParameters = {'C':             logspace(-4, 4, 20), 
+                               'max_iter' :     [100, 1000, 2500, 5000],
+                               'warm_start':    [True, False],
+                               'solver' :       ['lbfgs','newton-cg','liblinear','sag','saga']}
+            # Create a classifier which will be used for optimization:
+            supportVectorMachineModel = LogisticRegression()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
-            grid_search = GridSearchCV(supportVectorMachineModel,hyperParameters,refit=True,verbose=2)                                 # The number of cross-validation folds to be used.
+            grid_search = GridSearchCV(supportVectorMachineModel, hyperParameters, cv=3, verbose=True, n_jobs=-1)
             # Fit the random search object to the data:
             grid_search.fit(X_train, y_train)
             # Create a variable for the best model:
@@ -169,22 +170,22 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             print('Best hyperparameters:',  grid_search.best_params_)
     ####### END OF Hyper-parameter Tuning ###############################################
 
-    # Create SVM classifier object:
+    # Create Logistic Regression classifier object:
     if hyper_parameter_tuning:
         classifierObject = bestModelHypertuned
     else:
-        classifierObject = svm.SVC(kernel='rbf', gamma='auto')
-
-    # Train SVM classifier:
+        classifierObject = LogisticRegression()
+    
+    # Train Logistic Regression classifier:
     if not hyper_parameter_tuning:                  # No need to train again a hyper-parameter-tuned model since it has alreay been trained during tuning:
         classifierObject.fit(X_train, y_train)
-
+    
     # Predict the labels for test dataset:
     y_pred = classifierObject.predict(X_test)
 
     ################################### Calculate Performance Metrics #######################################################
     ### Calculate numeric performance metrics and write them into the file with the path of performanceMetricsFilePath:
-    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\PerformanceMetrics' + data_type_string + '.txt'
+    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\PerformanceMetrics' + data_type_string + '.txt'
     # Wipe the content of the preformance metrics file which is the result of the previous execution:
     with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
         FileWritten.write("")
@@ -197,29 +198,19 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
         FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
     ###### Create the confusion matrix:
     confusionMatrix = confusion_matrix(y_test,y_pred)
-    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'ConfusionMatrix' + '.png')
-    ###### Permutation Feature Importance:
-    # Permutation feature importance is defined as "the difference between the baseline metric and metric from permutating the feature column".
-    # It is used for non-linear kernels!!!
-    perm_importance = permutation_importance(classifierObject, X, y)        # Returns a Dictionary-like object. 
-    # Normalize the feature importances such that the sum of all feature importances is 1.0, therefore the feature importances can be understood as percentages:
-    perm_importance_normalized = perm_importance.importances_mean/perm_importance.importances_mean.sum()
-    # Organize features for the plot:
-    feature_names = X.columns
-    features = numpy.array(feature_names)
-    # Sort to plot in the order of importance:
-    sorted_idx = perm_importance_normalized.argsort()
-    # Plot:
-    fig = matplotlib.pyplot.figure(figsize=(16, 16), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
-    matplotlib.pyplot.title('Permutation Feature Importance',fontsize=20)
-    matplotlib.pyplot.barh(features[sorted_idx], perm_importance_normalized[sorted_idx], color='b', align='center')
-    matplotlib.pyplot.xlabel('Relative Importance to the Model', fontsize=15)
-    matplotlib.pyplot.xticks(fontsize=15)
-    matplotlib.pyplot.yticks(fontsize=15)
-    matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\SupportVectorMachines\SupportVectorMachines' + data_type_string + 'PermutationFeatureImportance' + '.png')
+    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ConfusionMatrix' + data_type_string + '.png')
+    ###### Plot the ROC Curve:
+    y_pred_proba = classifierObject.predict_proba(X_test)[::,1]
+    fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba, pos_label='ADHD_positive')
+    auc = metrics.roc_auc_score(y_test, y_pred_proba)
+    plt.figure(2)
+    plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+    plt.legend(loc=4)
+    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ROC_Curve' + data_type_string + '.png')
+    ################################### END OF Performance Metrics #########################################################
 
 def main():
-    supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True, search_type='randomized')
+    logisticRegressionUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
 if __name__ == "__main__":
