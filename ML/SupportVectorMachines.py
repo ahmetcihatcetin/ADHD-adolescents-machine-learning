@@ -140,7 +140,7 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             hyperParameters = {'C':         uniform(0.1, 10), 
                                'gamma':     ['scale', 'auto'] + list(logspace(-3, 3, 50)),
                                'kernel':    ['linear', 'rbf', 'poly', 'sigmoid']}
-            # Create a SVM classifier which we'll be used for optimization:
+            # Create a SVM classifier which will be used for optimization:
             supportVectorMachineModel = svm.SVC()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
             randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=20, cv=5)
@@ -157,7 +157,7 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             hyperParameters = {'C':         [0.1,1, 10, 100], 
                                'gamma':     [1,0.1,0.01,0.001],
                                'kernel':    ['rbf', 'poly', 'sigmoid']}
-            # Create a SVM classifier which we'll be used for optimization:
+            # Create a SVM classifier which will be used for optimization:
             supportVectorMachineModel = svm.SVC()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
             grid_search = GridSearchCV(supportVectorMachineModel,hyperParameters,refit=True,verbose=2)                                 # The number of cross-validation folds to be used.
