@@ -6,6 +6,12 @@ import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 
+# Modules for Hyper-parameter Tuning:
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import PowerTransformer
+from numpy import logspace
+
 # Modules for Performance Metrics:
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -125,9 +131,31 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     # Split dataset into training set and test set
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30) # 70% training and 30% test
 
+    ####### Hyper-parameter Tuning ######################################################
+    if hyper_parameter_tuning:
+        if search_type == 'randomized': ### Tuning with Randomized Search ##############
+            pass
+        else:       #################################### Tuning with Grid Search ###########
+            cv_method = RepeatedStratifiedKFold(n_splits=5, 
+                                                n_repeats=3)
+            params_NB = {'var_smoothing': logspace(0,-9, num=100)}
+            grid_search = GridSearchCV( GaussianNB(), 
+                                        param_grid=params_NB, 
+                                        cv=cv_method,
+                                        verbose=1,
+                                        n_jobs=-1, 
+                                        scoring='accuracy')
+            # Fit the grid search object to the data:
+            grid_search.fit(X_train, y_train)
+            # Create a variable for the best model:
+            bestModelHypertuned = grid_search.best_estimator_
+            # Print the best values for the hyperparameters:
+            print('Best hyperparameters:',  grid_search.best_params_)
+    ####### END OF Hyper-parameter Tuning ###############################################
+
     # Create a Gaussian classifier:
     if hyper_parameter_tuning:
-        pass
+        classifierObject = bestModelHypertuned
     else:
         classifierObject = GaussianNB()
 
@@ -165,7 +193,7 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     ################################### END OF Performance Metrics #########################################################
 
 def main():
-    naiveBayesGaussianUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
+    naiveBayesGaussianUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True, search_type='grid')
 
 if __name__ == "__main__":
     main()
