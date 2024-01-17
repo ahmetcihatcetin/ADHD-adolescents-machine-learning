@@ -3,7 +3,7 @@
 import pandas as pd
 
 # Machine Learning Modules:
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 
 # Modules for Hyper-parameter Tuning:
@@ -11,13 +11,13 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GridSearchCV
 from numpy import arange
 from numpy import logspace
+from numpy import linspace
 
 # Modules for Performance Metrics:
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Import necessary libraries for plotting the ROC Curve:
-import seaborn.objects
 import matplotlib.pyplot as plt
 
 field_names_for_parent_data = [     "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
@@ -108,7 +108,7 @@ for field in field_names_for_parent_data:
 for field in field_names_for_teacher_data:
     field.encode()
 
-def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuning=False, search_type=None):
+def gradientBoostingUtilizingScikit(data_type, data_path, hyper_parameter_tuning=False, search_type=None):
     # Initialize the data_type specific variables:
     if data_type == 'parent':
         # Determine the correct field names for Parent:
@@ -120,7 +120,7 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
         field_names = field_names = field_names_for_teacher_data
         # Assign the data_type specific string for the file paths:
         data_type_string = 'Teacher'
-    
+
     # load dataset:
     dataFrame = pd.read_csv(data_path, header=None, names=field_names)
 
@@ -133,15 +133,13 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30) # 70% training and 30% test
 
     ####### Hyper-parameter Tuning ######################################################
+    ####### Hyper-parameter Tuning ######################################################
     if hyper_parameter_tuning:
         if search_type == 'randomized': ### Tuning with Randomized Search ##############
             # Create dictionary for the hyper parameters which we want to optimize:
-            hyperParameters = {'C':             arange(0, 1, 0.01), 
-                               'max_iter':      range(100, 500),
-                               'warm_start':    [True, False],
-                               'solver':        ['lbfgs','newton-cg','liblinear','sag','saga']}
+            hyperParameters = {}
             # Create a classifier which will be used for optimization:
-            supportVectorMachineModel = LogisticRegression()
+            supportVectorMachineModel = GradientBoostingClassifier()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
             randomized_search = RandomizedSearchCV(estimator=supportVectorMachineModel, param_distributions=hyperParameters, n_iter=100, scoring = 'accuracy', n_jobs=-1, verbose=1, random_state=1)
 
@@ -154,14 +152,19 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             
         else:       #################################### Tuning with Grid Search #######
             # Create dictionary for the hyper parameters which we want to optimize:
-            hyperParameters = {'C':             logspace(-4, 4, 20), 
-                               'max_iter' :     [100, 1000, 2500, 5000],
-                               'warm_start':    [True, False],
-                               'solver' :       ['lbfgs','newton-cg','liblinear','sag','saga']}
+            hyperParameters = {'loss':                      ['log_loss', 'deviance'],
+                               'learning_rate':             [0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2], 
+                               'min_samples_split' :        linspace(0.1, 0.5, 12),
+                               'min_samples_leaf':          linspace(0.1, 0.5, 12),
+                               'max_depth' :                [3,5,8],
+                               'max_features':              ['sqrt', 'log2'],
+                               'criterion':                 ['friedman_mse', 'squared_error', 'mae'],
+                               'subsample':                 [0.5, 0.618, 0.8, 0.85, 0.9, 0.95, 1.0],
+                               'n_estimators':              linspace(10,100,10)}
             # Create a classifier which will be used for optimization:
-            supportVectorMachineModel = LogisticRegression()
+            supportVectorMachineModel = GradientBoostingClassifier()
             # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
-            grid_search = GridSearchCV(supportVectorMachineModel, hyperParameters, cv=3, verbose=True, n_jobs=-1)
+            grid_search = GridSearchCV(supportVectorMachineModel, hyperParameters, cv=10, verbose=0, n_jobs=-1)
             # Fit the random search object to the data:
             grid_search.fit(X_train, y_train)
             # Create a variable for the best model:
@@ -170,13 +173,14 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             print('Best hyperparameters:',  grid_search.best_params_)
     ####### END OF Hyper-parameter Tuning ###############################################
 
-    # Create Logistic Regression classifier object:
+    # Create Gradient Boosting Classifier Object:
     if hyper_parameter_tuning:
         classifierObject = bestModelHypertuned
+        pass
     else:
-        classifierObject = LogisticRegression()
-    
-    # Train Logistic Regression classifier:
+        classifierObject = GradientBoostingClassifier()
+
+    # Train Gradient Boosting Classifier:
     if not hyper_parameter_tuning:                  # No need to train again a hyper-parameter-tuned model since it has alreay been trained during tuning:
         classifierObject.fit(X_train, y_train)
     
@@ -185,7 +189,7 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
 
     ################################### Calculate Performance Metrics #######################################################
     ### Calculate numeric performance metrics and write them into the file with the path of performanceMetricsFilePath:
-    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\PerformanceMetrics' + data_type_string + '.txt'
+    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\GradientBoosting\PerformanceMetrics' + data_type_string + '.txt'
     # Wipe the content of the preformance metrics file which is the result of the previous execution:
     with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
         FileWritten.write("")
@@ -198,7 +202,7 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
         FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
     ###### Create the confusion matrix:
     confusionMatrix = confusion_matrix(y_test,y_pred)
-    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ConfusionMatrix' + data_type_string + '.png')
+    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\GradientBoosting\ConfusionMatrix' + data_type_string + '.png')
     ###### Plot the ROC Curve:
     y_pred_proba = classifierObject.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba, pos_label='ADHD_positive')
@@ -206,12 +210,12 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
     plt.figure(2)
     plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
     plt.legend(loc=4)
-    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ROC_Curve' + data_type_string + '.png')
+    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\GradientBoosting\ROC_Curve' + data_type_string + '.png')
     ################################### END OF Performance Metrics #########################################################
 
 def main():
-    logisticRegressionUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
-    #logisticRegressionUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
+    gradientBoostingUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
+    #gradientBoostingUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=False, search_type='grid')
 
 if __name__ == "__main__":
     main()
