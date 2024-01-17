@@ -9,7 +9,6 @@ from sklearn.model_selection import train_test_split
 # Modules for Hyper-parameter Tuning:
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import PowerTransformer
 from numpy import logspace
 
 # Modules for Performance Metrics:
