@@ -17,6 +17,10 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 # Import necessary libraries for plotting the ROC Curve:
 import seaborn.objects
 
+# Import necessary libraries for plotting the feature importance plot:
+import matplotlib.pyplot as plt
+import numpy as np
+
 field_names_for_parent_data = [         "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                         "2. Büyüklere karşı arsız ve küstah davranır.",
                                         "3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
@@ -234,6 +238,18 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
     graph.write_png(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\decisionTreeUsed' + data_type_string + '.png')
     Image(graph.create_png())
+
+    ###### Plot the Importance of each Feature:
+    # Gini-based:
+    feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
+    sorted_idx = np.argsort(feature_importance)                                 # Perform an indirect quicksort on the feature importances ndarray
+    plt.figure(2)
+    plt.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
+    plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
+    plt.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
+    plt.title('Feature Importance', fontsize=20)
+    plt.xlabel('Relative Importance to the Model', fontsize=15)
+    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\FeatureImportance' + data_type_string + '.png')
 
 def main():
     decisionTreeUtilizingScikit('doctors', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv")
