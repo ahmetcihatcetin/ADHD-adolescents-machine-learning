@@ -2,9 +2,9 @@ import csv
 
 adhd_negative = "ADHD_negative"                                     # Constant string for negative classifier
 adhd_positive = "ADHD_positive"                                     # Constant string for positive classifier
-filePath1 = "ConnersParentRatingScaleNumeric.csv"                   # Positives data
-filePath2 = "ControlGroupConnersParentRatingScaleNumeric.csv"       # Negatives Data
-fileToWritePath = "ConnersParentData.csv"                           # Synthesis file in which we will combine the positives and the negatives
+filePath1 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\DoctorsNotesNumeric.csv'                               # Positives data
+filePath2 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\DoctorsNotesControlNumeric.csv'                        # Negatives Data
+fileToWritePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\DoctorsNotesData.csv'                            # Synthesis file in which we will combine the positives and the negatives
 
 csvPositivesList = []                                               # The buffer for positives data: The buffers are used in order to remove patient names and add the classifier field.
 csvNegativesList = []                                               # The buffer for negatives data

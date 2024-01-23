@@ -16,7 +16,7 @@ def shuffle(filePath):
         csvWriter.writerows(buffer)
 
 def main():
-    shuffle("ConnersParentData.csv")
+    shuffle(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\DoctorsNotesData.csv' )
 
 if __name__ == "__main__":
     main()
