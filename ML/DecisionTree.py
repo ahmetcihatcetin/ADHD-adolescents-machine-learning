@@ -188,6 +188,34 @@ field_names_for_combined_data = [       "ConnersParent-1. Eli boş durmaz, süre
                                         "ConnersParent-46. Övünür böbürlenir.",
                                         "ConnersParent-47. İtilip kakılmaya müsaittir.",
                                         "ConnersParent-48. Dışkılama sorunları vardır (sık ishal, kabızlık, düzensiz tuvalet alışkanlığı gibi…).",
+                                        "ConnersTeacher-1. Kıpır kıpırdır, yerinde duramaz.",
+                                        "ConnersTeacher-2. Zamansız ve uyumsuz sesler çıkarır.",
+                                        "ConnersTeacher-3. İstekleri hemen yerine getirilmelidir.",
+                                        "ConnersTeacher-4. Bilmiş tavırları vardır, bilgiçlik taslar.",
+                                        "ConnersTeacher-5. Aniden parlar, ne yapacağı belli olmaz.",
+                                        "ConnersTeacher-6. Eleştiri kaldıramaz.",
+                                        "ConnersTeacher-7. Dikkati dağınıktır.",
+                                        "ConnersTeacher-8. Diğer çocukları rahatsız eder.",
+                                        "ConnersTeacher-9. Hayallere dalar.",
+                                        "ConnersTeacher-10. Somurtur, surat asar.",
+                                        "ConnersTeacher-11. Bir anı bir anını tutmaz.",
+                                        "ConnersTeacher-12. Kavgacıdır.",
+                                        "ConnersTeacher-13. Büyüklerin sözünden çıkmaz.",
+                                        "ConnersTeacher-14. Hareketlidir, dur otur bilmez.",
+                                        "ConnersTeacher-15. Düşünmeden hareket eder.",
+                                        "ConnersTeacher-16. Öğretmenin ilgisi hep üzerinde olsun ister",
+                                        "ConnersTeacher-17. Arkadaş grubuna alınmaz.",
+                                        "ConnersTeacher-18. Başka çocuklar tarafından kolayca yönlendirilir.",
+                                        "ConnersTeacher-19. Oyun kurallarına uymaz, mızıkçıdır.",
+                                        "ConnersTeacher-20. Liderlik özelliği yoktur.",
+                                        "ConnersTeacher-21. Başladığı işin sonunu getiremez.",
+                                        "ConnersTeacher-22. Yaşından küçükmüş gibi davranır.",
+                                        "ConnersTeacher-23. Suçu başkasına atar.",
+                                        "ConnersTeacher-24. Geçimsizdir.",
+                                        "ConnersTeacher-25. Arkadaşlarıyla yardımlaşmaz.",
+                                        "ConnersTeacher-26. Zorluklardan hemen yılar.",
+                                        "ConnersTeacher-27. Öğretmenlerle işbirliği yapmaz.",
+                                        "ConnersTeacher-28. Zor öğrenir.",
                                         "Doctor-1. Hareketli",
                                         "Doctor-2. Kıpır kıpır",
                                         "Doctor-3. Çok konuşur/konuşkan",
@@ -276,7 +304,7 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     y = dataFrame["Label"]                      # y is in the type of pandas.Series is a one-dimensional ndarray with axis labels
     
     # Split dataset into training set and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
     
     # Create Decision Tree classifer object
     classifierObject = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)
@@ -348,7 +376,7 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\FeatureImportance' + data_type_string + '.png')
 
 def main():
-    decisionTreeUtilizingScikit('combined', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDataBinaryShuffledConnersParentAndDoctorsNotes.csv")
+    decisionTreeUtilizingScikit('combined', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDataConnersParentAndTeacherAndDoctorsNotes.csv")
     #decisionTreeUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
