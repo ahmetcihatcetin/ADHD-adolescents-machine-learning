@@ -139,7 +139,94 @@ field_names_for_doctor_notes_data = [   "1. Hareketli",
                                         "36. İsyankar",
                                         "37. Geçimsiz",
                                         "Label"]
-                                        
+
+field_names_for_combined_data = [       "ConnersParent-1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
+                                        "ConnersParent-2. Büyüklere karşı arsız ve küstah davranır.",
+                                        "ConnersParent-3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
+                                        "ConnersParent-4. Çabuk heyecanlanır, ataktır.",
+                                        "ConnersParent-5. Her şeye karışır ve yönetmek ister.",
+                                        "ConnersParent-6. Bir şeyler çiğner veya emer (parmak, giysi gibi)",
+                                        "ConnersParent-7. Sık sık ve kolayca ağlar.",
+                                        "ConnersParent-8. Her an sataşmaya hazırdır.",
+                                        "ConnersParent-9. Hayallere dalar.",
+                                        "ConnersParent-10. Zor öğrenir.",
+                                        "ConnersParent-11. Kıpır kıpırdır, tez canlıdır.",
+                                        "ConnersParent-12. Ürkektir (yeni durum, insan ve yerlerden).",
+                                        "ConnersParent-13. Yerinde duramaz, her an harekete hazırdır.",
+                                        "ConnersParent-14. Zarar verir.",
+                                        "ConnersParent-15. Yalan söyler, masallar uydurur.",
+                                        "ConnersParent-16. Utangaçtır.",
+                                        "ConnersParent-17. Yaşıtlarından daha sık başını derde sokar.",
+                                        "ConnersParent-18. Yaşıtlarından farklı (çocuksu, zor anlaşılır, kekeleyerek gibi…) konuşur.",
+                                        "ConnersParent-19. Hatalarını kabullenmez, başkalarını suçlar.",
+                                        "ConnersParent-20. Kavgacıdır.",
+                                        "ConnersParent-21. Somurtkan. ve asık suratlıdır.",
+                                        "ConnersParent-22. Çalma huyu vardır.",
+                                        "ConnersParent-23. Söz dinlemez ya da isteksiz ve zoraki dinler.",
+                                        "ConnersParent-24. Başkalarına göre endişelidir (yalnız kalma, hastalanma, ölüm gibi konularda)",
+                                        "ConnersParent-25. Başladığı bir işin sonunu getiremez.",
+                                        "ConnersParent-26. Hassastır, kolay incinir.",
+                                        "ConnersParent-27. Kabadayılık taslar, başkalarını rahatsız eder.",
+                                        "ConnersParent-28. Tekrarlayıcı durduramadığı hareketleri vardır.",
+                                        "ConnersParent-29. Kaba ve acımasızdır.",
+                                        "ConnersParent-30. Yaşına göre daha çocuksudur.",
+                                        "ConnersParent-31. Dikkati kolay dağılır ya da uzun süre dikkatini toplayamaz.",
+                                        "ConnersParent-32. Baş ağrıları olur.",
+                                        "ConnersParent-33. Ruh halinde ani ve göz batan değişiklikler olur.",
+                                        "ConnersParent-34. Kurallar ve kısıtlamalardan hoşlanmaz ve uymaz.",
+                                        "ConnersParent-35. Sürekli kavga eder.",
+                                        "ConnersParent-36. Kardeşleriyle iyi geçinemez.",
+                                        "ConnersParent-37. Zora gelemez.",
+                                        "ConnersParent-38. Diğer çocukları rahatsız eder.",
+                                        "ConnersParent-39. Genelde hoşnutsuz bir çocuktur.",
+                                        "ConnersParent-40. Yeme sorunları vardır (sofradan sık sık kalkar, iştahsızdır gibi…).",
+                                        "ConnersParent-41. Karın ağrıları olur.",
+                                        "ConnersParent-42. Uyku sorunları vardır (uykuya dalamam, erken uyanma, gece kalkma gibi…).",
+                                        "ConnersParent-43. Çeşitli ağrı ve sancıları olur.",
+                                        "ConnersParent-44. Bulantı kusmaları olur.",
+                                        "ConnersParent-45. Aile içinde daha az kayrıldığını düşünür.",
+                                        "ConnersParent-46. Övünür böbürlenir.",
+                                        "ConnersParent-47. İtilip kakılmaya müsaittir.",
+                                        "ConnersParent-48. Dışkılama sorunları vardır (sık ishal, kabızlık, düzensiz tuvalet alışkanlığı gibi…).",
+                                        "Doctor-1. Hareketli",
+                                        "Doctor-2. Kıpır kıpır",
+                                        "Doctor-3. Çok konuşur/konuşkan",
+                                        "Doctor-4. Sabırsız"
+                                        "Doctor-5. Aceleci",
+                                        "Doctor-6. Sırasını beklemez",
+                                        "Doctor-7. Söz keser",
+                                        "Doctor-8. Araya girer",
+                                        "Doctor-9. Koşturur",
+                                        "Doctor-10. Eli ayağı durmaz",
+                                        "Doctor-11. Motor takılmış gibi",
+                                        "Doctor-12. Aklına eseni yapar",
+                                        "Doctor-13. Sıkılgan",
+                                        "Doctor-14. Yaramaz",
+                                        "Doctor-15. Atılgan",
+                                        "Doctor-16. Öfkeli",
+                                        "Doctor-17. İnatçı",
+                                        "Doctor-18. Çok tartışır",
+                                        "Doctor-19. Düşünmeden aniden hareket eder",
+                                        "Doctor-20. Dikkatsiz",
+                                        "Doctor-21. Dinlemez",
+                                        "Doctor-22. Dağınık",
+                                        "Doctor-23. Düzensiz",
+                                        "Doctor-24. Sakar",
+                                        "Doctor-25. Dalgın",
+                                        "Doctor-26. Savruk",
+                                        "Doctor-27. Hayalci",
+                                        "Doctor-28. Ödevlerini bitirmez/bitiremez",
+                                        "Doctor-29. İsteksiz",
+                                        "Doctor-30. Görevlerini organize edemez",
+                                        "Doctor-31. Eşya kaybeder",
+                                        "Doctor-32. Unutkan",
+                                        "Doctor-33. Söz dinlemez",
+                                        "Doctor-34. Kavgacı",
+                                        "Doctor-35. Sinirli",
+                                        "Doctor-36. İsyankar",
+                                        "Doctor-37. Geçimsiz",
+                                        "Label"]
+
 # Encode the data in utf-8:
 for field in field_names_for_parent_data:
     field.encode()
@@ -150,6 +237,10 @@ for field in field_names_for_teacher_data:
 
 # Encode the data in utf-8:
 for field in field_names_for_doctor_notes_data:
+    field.encode()
+
+# Encode the data in utf-8:
+for field in field_names_for_combined_data:
     field.encode()
 
 def decisionTreeUtilizingScikit(data_type,data_path):
@@ -169,6 +260,11 @@ def decisionTreeUtilizingScikit(data_type,data_path):
         field_names = field_names = field_names_for_doctor_notes_data
         # Assign the data_type specific string for the file paths:
         data_type_string = 'DoctorsNotes'
+    elif data_type == 'combined':
+        # Determine the correct field names for Doctor's Notes:
+        field_names = field_names = field_names_for_combined_data
+        # Assign the data_type specific string for the file paths:
+        data_type_string = 'Combined'
     
     # load dataset:
     dataFrame = pd.read_csv(data_path, header=None, names=field_names)
@@ -252,7 +348,7 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\FeatureImportance' + data_type_string + '.png')
 
 def main():
-    decisionTreeUtilizingScikit('doctors', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv")
+    decisionTreeUtilizingScikit('combined', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDataBinaryShuffledConnersParentAndDoctorsNotes.csv")
     #decisionTreeUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
