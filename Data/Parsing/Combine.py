@@ -4,9 +4,9 @@ import numpy as np
 adhd_negative = "ADHD_negative"                                     # Constant string for negative classifier
 adhd_positive = "ADHD_positive"                                     # Constant string for positive classifier
 
-filePath1 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\CombinedDataConnersParentAndTeacherScaledDown.csv'
-filePath2 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\DoctorsNotesData.csv'
-fileToWritePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\CombinedDataConnersParentAndTeacherAndDoctorsNotes.csv'
+filePath1 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\CombinedConnersAndDoctorsNotes.csv'
+filePath2 = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\RiskFactorsData.csv'
+fileToWritePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Parsing\CombinedConnersAndDoctorsNotesAndRiskFactors.csv'
 
 csvList1 = []               # The buffer for the rows of the first list
 
