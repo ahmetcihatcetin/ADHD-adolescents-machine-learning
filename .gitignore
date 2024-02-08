@@ -6,3 +6,5 @@ settings.json
 *.png
 # Ignore Metrics files:
 PerformanceMetrics*.txt
+# Ignore launch configuration for VS Code:
+launch.json
