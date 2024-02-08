@@ -21,6 +21,9 @@ import seaborn.objects
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Import necessary libraries for K-fold Cross Validation
+from sklearn.model_selection import KFold
+
 field_names_for_parent_data = [         "1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                         "2. Büyüklere karşı arsız ve küstah davranır.",
                                         "3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
@@ -271,7 +274,7 @@ for field in field_names_for_doctor_notes_data:
 for field in field_names_for_combined_data:
     field.encode()
 
-def decisionTreeUtilizingScikit(data_type,data_path):
+def decisionTreeUtilizingScikit(data_type,data_path,cross_validation=False):
     # Initialize the data_type specific variables:
     if data_type == 'parent':
         # Determine the correct field names for Parent:
@@ -302,81 +305,114 @@ def decisionTreeUtilizingScikit(data_type,data_path):
     X = dataFrame[field_names[0:-1]]            # X is another pandas.DataFrame which resembles a 2-D array in which rows could be accessed by their indexes. (And ofcourse columns could be accessed by their column_names)
     # Set the target variable (the classifier variable):
     y = dataFrame["Label"]                      # y is in the type of pandas.Series is a one-dimensional ndarray with axis labels
-    
-    # Split dataset into training set and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
-    
-    # Create Decision Tree classifer object
-    classifierObject = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)
-    # Train Decision Tree Classifer
-    classifierObject = classifierObject.fit(X_train,y_train)
-    #Predict the response for test dataset
-    y_pred = classifierObject.predict(X_test)
 
-    # Print out the expected_label VS predicted_label:
-    #y_test_list = y_test.to_list()
-    #y_pred_list = y_pred.tolist()
-    #print(len(y_test_list))
-    #for i in range (0,len(y_test_list)):
-    #    print(y_test_list[i]+" vs "+y_pred_list[i])
+    if cross_validation == False:
+        # Split dataset into training set and test set
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
 
-    ################################### Calculate Performance Metrics #######################################################
-    performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\PerformanceMetrics' + data_type_string + '.txt'
-    # Wipe the content of the preformance metrics file which is the result of the previous execution:
-    with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
-        FileWritten.write("")
-    # Open the file in which the performance metrics will be written in append mode:
-    with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
-        # Model Accuracy, how often is the classifier correct?
-        FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
-        FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
-        FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
-        FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
+        # Create Decision Tree classifer object
+        classifierObject = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)
+        # Train Decision Tree Classifer
+        classifierObject = classifierObject.fit(X_train,y_train)
+        #Predict the response for test dataset
+        y_pred = classifierObject.predict(X_test)
 
-    ###### Create the confusion matrix:
-    confusionMatrix = confusion_matrix(y_test,y_pred)
-    ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ConfusionMatrix' + data_type_string + '.png')
+        # Print out the expected_label VS predicted_label:
+        #y_test_list = y_test.to_list()
+        #y_pred_list = y_pred.tolist()
+        #print(len(y_test_list))
+        #for i in range (0,len(y_test_list)):
+        #    print(y_test_list[i]+" vs "+y_pred_list[i])
 
-    # Plot ROC Curve:
-    # Predict probabilities for the test set:
-    probabilitiesOfClasses = classifierObject.predict_proba(X_test)
-    # Keep probablities for only the positive outcome: ADHD_positive
-    probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
-    # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
-    noskill_probabilities = [0 for number in range(len(y_test))]
-    # Calculate the related data which are false positive rate and true positive rate for the test set:
-    falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
-    # Calculate the related data for 45-degrees line:
-    falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
-    # Plot the ROC Curve with a 45-degrees line as a reference by utilizing seaborn objects library:
-    myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
-    # Save the plot on PNG file:
-    myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ROC_Curve' + data_type_string + '.png')
-    ################################### Calculate Performance Metrics END ###################################################
+        ################################### Calculate Performance Metrics #######################################################
+        performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\PerformanceMetrics' + data_type_string + '.txt'
+        # Wipe the content of the preformance metrics file which is the result of the previous execution:
+        with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("")
+        # Open the file in which the performance metrics will be written in append mode:
+        with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+            # Model Accuracy, how often is the classifier correct?
+            FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
+            FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
+            FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
+            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
 
-    # Visualize the used decision tree:
-    dot_data = StringIO()
-    export_graphviz(classifierObject, out_file=dot_data,  
-                filled=True, rounded=True,
-                special_characters=True,feature_names = field_names[0:-1],class_names=['ADHD_negative','ADHD_positive'])
-    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-    graph.write_png(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\decisionTreeUsed' + data_type_string + '.png')
-    Image(graph.create_png())
+        ###### Create the confusion matrix:
+        confusionMatrix = confusion_matrix(y_test,y_pred)
+        ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ConfusionMatrix' + data_type_string + '.png')
 
-    ###### Plot the Importance of each Feature:
-    # Gini-based:
-    feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
-    sorted_idx = np.argsort(feature_importance)                                 # Perform an indirect quicksort on the feature importances ndarray
-    plt.figure(2)
-    plt.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
-    plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
-    plt.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
-    plt.title('Feature Importance', fontsize=20)
-    plt.xlabel('Relative Importance to the Model', fontsize=15)
-    plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\FeatureImportance' + data_type_string + '.png')
+        # Plot ROC Curve:
+        # Predict probabilities for the test set:
+        probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+        # Keep probablities for only the positive outcome: ADHD_positive
+        probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+        # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+        noskill_probabilities = [0 for number in range(len(y_test))]
+        # Calculate the related data which are false positive rate and true positive rate for the test set:
+        falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
+        # Calculate the related data for 45-degrees line:
+        falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+        # Plot the ROC Curve with a 45-degrees line as a reference by utilizing seaborn objects library:
+        myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+        # Save the plot on PNG file:
+        myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ROC_Curve' + data_type_string + '.png')
+        ################################### Calculate Performance Metrics END ###################################################
+
+        # Visualize the used decision tree:
+        dot_data = StringIO()
+        export_graphviz(classifierObject, out_file=dot_data,  
+                    filled=True, rounded=True,
+                    special_characters=True,feature_names = field_names[0:-1],class_names=['ADHD_negative','ADHD_positive'])
+        graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
+        graph.write_png(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\decisionTreeUsed' + data_type_string + '.png')
+        Image(graph.create_png())
+
+        ###### Plot the Importance of each Feature:
+        # Gini-based:
+        feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
+        sorted_idx = np.argsort(feature_importance)                                 # Perform an indirect quicksort on the feature importances ndarray
+        plt.figure(2)
+        plt.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
+        plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
+        plt.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
+        plt.title('Feature Importance', fontsize=20)
+        plt.xlabel('Relative Importance to the Model', fontsize=15)
+        plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\FeatureImportance' + data_type_string + '.png')
+    elif cross_validation == True:
+        ############################# K-fold Cross Validation ###################################################################
+        accuracyScores = []
+        precisionScores = []
+        recallScores = []
+        fOneScores = []
+        kf = KFold(n_splits=10, shuffle=True)
+        for train_indeces, test_indeces in kf.split(X):
+            X_train, X_test = X.iloc[train_indeces,:], X.iloc[test_indeces,:]
+            y_train, y_test = y.iloc[train_indeces], y.iloc[test_indeces]
+            # Create Decision Tree classifer object
+            classifierObject = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)
+            # Train Decision Tree Classifer
+            classifierObject = classifierObject.fit(X_train,y_train)
+            #Predict the response for test dataset
+            y_pred = classifierObject.predict(X_test)
+            # Calculate and Append the performance metrics for current fold:
+            accuracyScores.append(metrics.accuracy_score(y_test, y_pred))
+            precisionScores.append(metrics.precision_score(y_test, y_pred,average='macro'))
+            recallScores.append(metrics.recall_score(y_test, y_pred,average='macro'))
+            fOneScores.append(metrics.f1_score(y_test, y_pred,average='macro'))
+        ### Cross-validate: calculate the MEANS
+        performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\KFoldPerformanceMetrics' + data_type_string + '.txt'
+        # Wipe the content of the preformance metrics file which is the result of the previous execution:
+        with open(performanceMetricsFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("")
+        # Open the file in which the performance metrics will be written in append mode:
+        with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("Accuracy: "  + str(np.mean(accuracyScores)) + '\n')
+            FileWritten.write("Precision: " + str(np.mean(precisionScores)) + '\n')
+            FileWritten.write("Recall: "    + str(np.mean(recallScores)) + '\n')
+            FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)))
 
 def main():
-    decisionTreeUtilizingScikit('combined', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDataConnersParentAndTeacherAndDoctorsNotes.csv")
+    decisionTreeUtilizingScikit('combined', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDataConnersParentAndTeacherAndDoctorsNotes.csv", cross_validation=True)
     #decisionTreeUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv")
     #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
 
