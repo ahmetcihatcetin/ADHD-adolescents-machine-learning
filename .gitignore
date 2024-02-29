@@ -6,5 +6,10 @@ settings.json
 *.png
 # Ignore Metrics files:
 PerformanceMetrics*.txt
+KFoldPerformanceMetrics*.txt
 # Ignore launch configuration for VS Code:
 launch.json
+# Ignore performance metrics files for pre-evaluation:
+/PerformanceMetricsForPreEvaluation/*
+# Ignore txt files:
+*.txt

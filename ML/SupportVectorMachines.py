@@ -157,6 +157,85 @@ field_names_for_risk_factors_data = [   "1. Cinsiyet",
                                         "12. Kardeşlerdedehb",
                                         "Label"]
 
+field_names_for_combined_conners_parent_and_teacher_data = [
+                                        "ConnersParent-1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
+                                        "ConnersParent-2. Büyüklere karşı arsız ve küstah davranır.",
+                                        "ConnersParent-3. Arkadaşlık kurmada ve sürdürmede zorlanır.",
+                                        "ConnersParent-4. Çabuk heyecanlanır, ataktır.",
+                                        "ConnersParent-5. Her şeye karışır ve yönetmek ister.",
+                                        "ConnersParent-6. Bir şeyler çiğner veya emer (parmak, giysi gibi)",
+                                        "ConnersParent-7. Sık sık ve kolayca ağlar.",
+                                        "ConnersParent-8. Her an sataşmaya hazırdır.",
+                                        "ConnersParent-9. Hayallere dalar.",
+                                        "ConnersParent-10. Zor öğrenir.",
+                                        "ConnersParent-11. Kıpır kıpırdır, tez canlıdır.",
+                                        "ConnersParent-12. Ürkektir (yeni durum, insan ve yerlerden).",
+                                        "ConnersParent-13. Yerinde duramaz, her an harekete hazırdır.",
+                                        "ConnersParent-14. Zarar verir.",
+                                        "ConnersParent-15. Yalan söyler, masallar uydurur.",
+                                        "ConnersParent-16. Utangaçtır.",
+                                        "ConnersParent-17. Yaşıtlarından daha sık başını derde sokar.",
+                                        "ConnersParent-18. Yaşıtlarından farklı (çocuksu, zor anlaşılır, kekeleyerek gibi…) konuşur.",
+                                        "ConnersParent-19. Hatalarını kabullenmez, başkalarını suçlar.",
+                                        "ConnersParent-20. Kavgacıdır.",
+                                        "ConnersParent-21. Somurtkan. ve asık suratlıdır.",
+                                        "ConnersParent-22. Çalma huyu vardır.",
+                                        "ConnersParent-23. Söz dinlemez ya da isteksiz ve zoraki dinler.",
+                                        "ConnersParent-24. Başkalarına göre endişelidir (yalnız kalma, hastalanma, ölüm gibi konularda)",
+                                        "ConnersParent-25. Başladığı bir işin sonunu getiremez.",
+                                        "ConnersParent-26. Hassastır, kolay incinir.",
+                                        "ConnersParent-27. Kabadayılık taslar, başkalarını rahatsız eder.",
+                                        "ConnersParent-28. Tekrarlayıcı durduramadığı hareketleri vardır.",
+                                        "ConnersParent-29. Kaba ve acımasızdır.",
+                                        "ConnersParent-30. Yaşına göre daha çocuksudur.",
+                                        "ConnersParent-31. Dikkati kolay dağılır ya da uzun süre dikkatini toplayamaz.",
+                                        "ConnersParent-32. Baş ağrıları olur.",
+                                        "ConnersParent-33. Ruh halinde ani ve göz batan değişiklikler olur.",
+                                        "ConnersParent-34. Kurallar ve kısıtlamalardan hoşlanmaz ve uymaz.",
+                                        "ConnersParent-35. Sürekli kavga eder.",
+                                        "ConnersParent-36. Kardeşleriyle iyi geçinemez.",
+                                        "ConnersParent-37. Zora gelemez.",
+                                        "ConnersParent-38. Diğer çocukları rahatsız eder.",
+                                        "ConnersParent-39. Genelde hoşnutsuz bir çocuktur.",
+                                        "ConnersParent-40. Yeme sorunları vardır (sofradan sık sık kalkar, iştahsızdır gibi…).",
+                                        "ConnersParent-41. Karın ağrıları olur.",
+                                        "ConnersParent-42. Uyku sorunları vardır (uykuya dalamam, erken uyanma, gece kalkma gibi…).",
+                                        "ConnersParent-43. Çeşitli ağrı ve sancıları olur.",
+                                        "ConnersParent-44. Bulantı kusmaları olur.",
+                                        "ConnersParent-45. Aile içinde daha az kayrıldığını düşünür.",
+                                        "ConnersParent-46. Övünür böbürlenir.",
+                                        "ConnersParent-47. İtilip kakılmaya müsaittir.",
+                                        "ConnersParent-48. Dışkılama sorunları vardır (sık ishal, kabızlık, düzensiz tuvalet alışkanlığı gibi…).",
+                                        "ConnersTeacher-1. Kıpır kıpırdır, yerinde duramaz.",
+                                        "ConnersTeacher-2. Zamansız ve uyumsuz sesler çıkarır.",
+                                        "ConnersTeacher-3. İstekleri hemen yerine getirilmelidir.",
+                                        "ConnersTeacher-4. Bilmiş tavırları vardır, bilgiçlik taslar.",
+                                        "ConnersTeacher-5. Aniden parlar, ne yapacağı belli olmaz.",
+                                        "ConnersTeacher-6. Eleştiri kaldıramaz.",
+                                        "ConnersTeacher-7. Dikkati dağınıktır.",
+                                        "ConnersTeacher-8. Diğer çocukları rahatsız eder.",
+                                        "ConnersTeacher-9. Hayallere dalar.",
+                                        "ConnersTeacher-10. Somurtur, surat asar.",
+                                        "ConnersTeacher-11. Bir anı bir anını tutmaz.",
+                                        "ConnersTeacher-12. Kavgacıdır.",
+                                        "ConnersTeacher-13. Büyüklerin sözünden çıkmaz.",
+                                        "ConnersTeacher-14. Hareketlidir, dur otur bilmez.",
+                                        "ConnersTeacher-15. Düşünmeden hareket eder.",
+                                        "ConnersTeacher-16. Öğretmenin ilgisi hep üzerinde olsun ister",
+                                        "ConnersTeacher-17. Arkadaş grubuna alınmaz.",
+                                        "ConnersTeacher-18. Başka çocuklar tarafından kolayca yönlendirilir.",
+                                        "ConnersTeacher-19. Oyun kurallarına uymaz, mızıkçıdır.",
+                                        "ConnersTeacher-20. Liderlik özelliği yoktur.",
+                                        "ConnersTeacher-21. Başladığı işin sonunu getiremez.",
+                                        "ConnersTeacher-22. Yaşından küçükmüş gibi davranır.",
+                                        "ConnersTeacher-23. Suçu başkasına atar.",
+                                        "ConnersTeacher-24. Geçimsizdir.",
+                                        "ConnersTeacher-25. Arkadaşlarıyla yardımlaşmaz.",
+                                        "ConnersTeacher-26. Zorluklardan hemen yılar.",
+                                        "ConnersTeacher-27. Öğretmenlerle işbirliği yapmaz.",
+                                        "ConnersTeacher-28. Zor öğrenir.",
+                                        "Label"]
+
 field_names_for_combined_conners_and_doctors_notes_data = [
                                         "ConnersParent-1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                         "ConnersParent-2. Büyüklere karşı arsız ve küstah davranır.",
@@ -364,6 +443,58 @@ field_names_for_combined_conners_and_risk_factors_data = [
                                         "RiskFactors-12. Kardeşlerdedehb",
                                         "Label"]
 
+field_names_for_combined_doctors_notes_and_risk_factors_data = [
+                                        "Doctor-1. Hareketli",
+                                        "Doctor-2. Kıpır kıpır",
+                                        "Doctor-3. Çok konuşur/konuşkan",
+                                        "Doctor-4. Sabırsız"
+                                        "Doctor-5. Aceleci",
+                                        "Doctor-6. Sırasını beklemez",
+                                        "Doctor-7. Söz keser",
+                                        "Doctor-8. Araya girer",
+                                        "Doctor-9. Koşturur",
+                                        "Doctor-10. Eli ayağı durmaz",
+                                        "Doctor-11. Motor takılmış gibi",
+                                        "Doctor-12. Aklına eseni yapar",
+                                        "Doctor-13. Sıkılgan",
+                                        "Doctor-14. Yaramaz",
+                                        "Doctor-15. Atılgan",
+                                        "Doctor-16. Öfkeli",
+                                        "Doctor-17. İnatçı",
+                                        "Doctor-18. Çok tartışır",
+                                        "Doctor-19. Düşünmeden aniden hareket eder",
+                                        "Doctor-20. Dikkatsiz",
+                                        "Doctor-21. Dinlemez",
+                                        "Doctor-22. Dağınık",
+                                        "Doctor-23. Düzensiz",
+                                        "Doctor-24. Sakar",
+                                        "Doctor-25. Dalgın",
+                                        "Doctor-26. Savruk",
+                                        "Doctor-27. Hayalci",
+                                        "Doctor-28. Ödevlerini bitirmez/bitiremez",
+                                        "Doctor-29. İsteksiz",
+                                        "Doctor-30. Görevlerini organize edemez",
+                                        "Doctor-31. Eşya kaybeder",
+                                        "Doctor-32. Unutkan",
+                                        "Doctor-33. Söz dinlemez",
+                                        "Doctor-34. Kavgacı",
+                                        "Doctor-35. Sinirli",
+                                        "Doctor-36. İsyankar",
+                                        "Doctor-37. Geçimsiz",
+                                        "RiskFactors-1. Cinsiyet",
+                                        "RiskFactors-2. Gebelikte sigara kullanımı",
+                                        "RiskFactors-3. DDA",
+                                        "RiskFactors-4. Erken doğum",
+                                        "RiskFactors-5. Anne yaşı",
+                                        "RiskFactors-6. Doğumda anne yaşı",
+                                        "RiskFactors-7. İndüklenmiş eylem",
+                                        "RiskFactors-8. Fetaldistres-hipoksi",
+                                        "RiskFactors-9. Sezaryendoğum",
+                                        "RiskFactors-10. Sarılık",
+                                        "RiskFactors-11. Gebeliktekomp",
+                                        "RiskFactors-12. Kardeşlerdedehb",
+                                        "Label"]
+
 field_names_for_combined_conners_and_doctors_notes_and_risk_factors_data = [
                                         "ConnersParent-1. Eli boş durmaz, sürekli bir şeylerle (tırnak, parmak, giysi gibi…) oynar.", 
                                         "ConnersParent-2. Büyüklere karşı arsız ve küstah davranır.",
@@ -509,11 +640,19 @@ for field in field_names_for_risk_factors_data:
     field.encode()
 
 # Encode the data in utf-8:
+for field in field_names_for_combined_conners_parent_and_teacher_data:
+    field.encode()
+
+# Encode the data in utf-8:
 for field in field_names_for_combined_conners_and_doctors_notes_data:
     field.encode()
 
 # Encode the data in utf-8:
 for field in field_names_for_combined_conners_and_risk_factors_data:
+    field.encode()
+
+# Encode the data in utf-8:
+for field in field_names_for_combined_doctors_notes_and_risk_factors_data:
     field.encode()
 
 # Encode the data in utf-8:
@@ -542,6 +681,11 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
         field_names = field_names = field_names_for_risk_factors_data
         # Assign the data_type specific string for the file paths:
         data_type_string = 'RiskFactors'
+    elif data_type == 'combinedConnersParentAndTeacher':
+        # Determine the correct field names for Doctor's Notes:
+        field_names = field_names = field_names_for_combined_conners_parent_and_teacher_data
+        # Assign the data_type specific string for the file paths:
+        data_type_string = 'CombinedConnersParentAndTeacher'
     elif data_type == 'combinedConnersAndDoctorsNotes':
         # Determine the correct field names for Doctor's Notes:
         field_names = field_names = field_names_for_combined_conners_and_doctors_notes_data
@@ -552,6 +696,11 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
         field_names = field_names = field_names_for_combined_conners_and_risk_factors_data
         # Assign the data_type specific string for the file paths:
         data_type_string = 'CombinedConnersAndRiskFactors'
+    elif data_type == 'combinedDoctorsNotesAndRiskFactors':
+        # Determine the correct field names for Doctor's Notes:
+        field_names = field_names = field_names_for_combined_doctors_notes_and_risk_factors_data
+        # Assign the data_type specific string for the file paths:
+        data_type_string = 'CombinedDoctorsNotesAndRiskFactors'
     elif data_type == 'combinedConnersAndDoctorsNotesAndRiskFactors':
         # Determine the correct field names for Doctor's Notes:
         field_names = field_names = field_names_for_combined_conners_and_doctors_notes_and_risk_factors_data
@@ -730,8 +879,15 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)))              
 
 def main():
-    supportVectorMachinesUtilizingScikit('parent', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv", hyper_parameter_tuning=True, search_type='randomized', cross_validation=True)
-    #decisionTreeUtilizingScikit('teacher', r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv")
+    supportVectorMachinesUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='teacher'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv",                                hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='doctors'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv",                                  hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='risk'                                        , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\RiskFactorsData.csv",                                   hyper_parameter_tuning=False,  search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersParentAndTeacher'             , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersData.csv",                                       hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotes'              , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotes.csv",                    hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndRiskFactors'               , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndRiskFactors.csv",                     hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedDoctorsNotesAndRiskFactors'          , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDoctorsNotesAndRiskFactors.csv",                hyper_parameter_tuning=False,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotesAndRiskFactors', data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotesAndRiskFactors.csv",      hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
 
 if __name__ == "__main__":
     main()
