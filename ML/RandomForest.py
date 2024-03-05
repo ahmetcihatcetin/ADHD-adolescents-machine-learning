@@ -741,8 +741,13 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             bestModelHypertuned = rand_search.best_estimator_
 
             # Print the best values for the hyperparameters:
-            print('Best hyperparameters:',  rand_search.best_params_)
-
+            hyperParameterFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\HyperParameters' + data_type_string + '.txt'
+            # Wipe the content of the hyper parameters file which is the result of the previous execution:
+            with open(hyperParameterFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+                FileWritten.write("")
+            # Open the file in which the hyper parameters will be written in append mode:
+            with open(hyperParameterFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+                FileWritten.write('Best hyperparameters: ' + str(rand_search.best_params_))
         ####### END OF Hyper-parameter Tuning ###############################################
             # Create Random Forest classifer object
             classifierObject = bestModelHypertuned
@@ -805,6 +810,13 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
         recallScores = []
         fOneScores = []
 
+        # Initialize the file which will hold the hyper parameters:
+        if hyper_parameter_tuning:
+            hyperParameterFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\KFoldHyperParameters' + data_type_string + '.txt'
+            # Wipe the content of the hyper parameters file which is the result of the previous execution:
+            with open(hyperParameterFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+                FileWritten.write("")
+
         kf = KFold(n_splits=10, shuffle=True)
         for train_indeces, test_indeces in kf.split(X):
             X_train, X_test = X.iloc[train_indeces,:], X.iloc[test_indeces,:]
@@ -833,7 +845,9 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
                 bestModelHypertuned = rand_search.best_estimator_
 
                 # Print the best values for the hyperparameters:
-                print('Best hyperparameters:',  rand_search.best_params_)
+                # Open the file in which the hyper parameters will be written in append mode:
+                with open(hyperParameterFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+                    FileWritten.write('Best hyperparameters: ' + str(rand_search.best_params_) + '\n')
 
                 # Create Random Forest classifer object
                 classifierObject = bestModelHypertuned
@@ -865,7 +879,7 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)))
 
 def main():
-    randomForestUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True, cross_validation=False)
+    randomForestUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True, cross_validation=True)
     #randomForestUtilizingScikit(data_type='teacher'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv",                                hyper_parameter_tuning=True, cross_validation=False)
     #randomForestUtilizingScikit(data_type='doctors'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv",                                  hyper_parameter_tuning=True, cross_validation=False)
     #randomForestUtilizingScikit(data_type='risk'                                        , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\RiskFactorsData.csv",                                   hyper_parameter_tuning=True, cross_validation=False)
