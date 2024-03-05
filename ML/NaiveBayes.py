@@ -736,7 +736,13 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
                 # Create a variable for the best model:
                 bestModelHypertuned = grid_search.best_estimator_
                 # Print the best values for the hyperparameters:
-                print('Best hyperparameters:',  grid_search.best_params_)
+                hyperParameterFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\NaiveBayes\HyperParameters' + data_type_string + '.txt'
+                # Wipe the content of the hyper parameters file which is the result of the previous execution:
+                with open(hyperParameterFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+                    FileWritten.write("")
+                # Open the file in which the hyper parameters will be written in append mode:
+                with open(hyperParameterFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+                    FileWritten.write('Best hyperparameters: ' + str(grid_search.best_params_))
             
             # Set the classifier object as the model with the best performance:
             classifierObject = bestModelHypertuned
@@ -783,6 +789,13 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
         recallScores = []
         fOneScores = []
 
+        # Initialize the file which will hold hyper parameters:
+        if hyper_parameter_tuning:
+            hyperParameterFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\NaiveBayes\KFoldHyperParameters' + data_type_string + '.txt'
+            # Wipe the content of the hyper parameters file which is the result of the previous execution:
+            with open(hyperParameterFilePath,'w',newline='',encoding='UTF-8') as FileWritten:
+                FileWritten.write("")
+
         kf = KFold(n_splits=10, shuffle=True)
         for train_indeces, test_indeces in kf.split(X):
             X_train, X_test = X.iloc[train_indeces,:], X.iloc[test_indeces,:]
@@ -806,7 +819,9 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
                     # Create a variable for the best model:
                     bestModelHypertuned = grid_search.best_estimator_
                     # Print the best values for the hyperparameters:
-                    print('Best hyperparameters:',  grid_search.best_params_)
+                    # Open the file in which the hyper parameters will be written in append mode:
+                    with open(hyperParameterFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+                        FileWritten.write('Best hyperparameters: ' + str(grid_search.best_params_) + '\n')
 
                 # Set the classifier object as the model with the best performance:
                 classifierObject = bestModelHypertuned

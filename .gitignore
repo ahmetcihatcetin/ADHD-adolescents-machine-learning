@@ -4,12 +4,14 @@ settings.json
 *.csv
 # Ignore PNG files:
 *.png
+# Ignore txt files:
+*.txt
+
 # Ignore Metrics files:
-PerformanceMetrics*.txt
-KFoldPerformanceMetrics*.txt
+#PerformanceMetrics*.txt
+#KFoldPerformanceMetrics*.txt
+
 # Ignore launch configuration for VS Code:
 launch.json
 # Ignore performance metrics files for pre-evaluation:
 /PerformanceMetricsForPreEvaluation/*
-# Ignore txt files:
-*.txt
