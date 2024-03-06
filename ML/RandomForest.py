@@ -776,7 +776,10 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')) + '\n')
         ###### Create the confusion matrix:
         confusionMatrix = confusion_matrix(y_test,y_pred)
-        ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'ConfusionMatrix' + '.png')
+        confusionDisplayObject = ConfusionMatrixDisplay(confusion_matrix=confusionMatrix)
+        confusionDisplayObject.plot()
+        confusionDisplayObject.ax_.set(xlabel='Tahmin Edilen Sınıf', ylabel='Gerçek Sınıf')
+        confusionDisplayObject.figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\ConfusionMatrix' + data_type_string + '.png')
         ###### Plot the Importance of each Feature:
         # Gini-based:
         feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
@@ -784,8 +787,8 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
         fig = plt.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
         plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
         plt.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
-        plt.title('Feature Importance', fontsize=20)
-        plt.xlabel('Relative Importance to the Model', fontsize=15)
+        plt.title('Maddelerin Önemlilik Sıralaması', fontsize=20)
+        plt.xlabel('Maddenin Modele Kıyasla Önemi', fontsize=15)
         plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'FeatureImportance' + '.png')
         ########################################### Plot ROC Curve #################################################
         # Predict probabilities for the test set:
@@ -807,12 +810,12 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
         falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
         # Plot the ROC Curve of the decision tree predictions and no skill predictions which is a 45-degrees line (since it either predicts positive or negative for all data points) as a reference :
         plt.figure(2)
-        plt.title(label='Receiver Operating Characteristic (ROC) Curve')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.plot(falsePosRate_randomForest, truePosRate__randomForest, label='Random Forest, AUC:' + str(randomForestAUC), linestyle='solid', linewidth=3)
+        plt.title(label='Receiver Operating Characteristic (ROC) Eğrisi')
+        plt.xlabel('Yanlış Pozitif Oranı')
+        plt.ylabel('Doğru Pozitif Oranı')
+        plt.plot(falsePosRate_randomForest, truePosRate__randomForest, label='Rastgele Orman, AUC:' + str(randomForestAUC), linestyle='solid', linewidth=3)
         plt.scatter(falsePosRate_randomForest,truePosRate__randomForest, linewidth=0.5)
-        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='No Skill, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
+        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='Algoritma kullanılmadan, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
         plt.legend(loc=4)
         plt.gca().set_facecolor('#cbced0')
         plt.grid(visible=True, color='#ffffff') 

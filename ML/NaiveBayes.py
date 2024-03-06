@@ -772,7 +772,10 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')) + '\n')
         ###### Create the confusion matrix:
         confusionMatrix = confusion_matrix(y_test,y_pred)
-        ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\NaiveBayes\ConfusionMatrix' + data_type_string + '.png')
+        confusionDisplayObject = ConfusionMatrixDisplay(confusion_matrix=confusionMatrix)
+        confusionDisplayObject.plot()
+        confusionDisplayObject.ax_.set(xlabel='Tahmin Edilen Sınıf', ylabel='Gerçek Sınıf')
+        confusionDisplayObject.figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\NaiveBayes\ConfusionMatrix' + data_type_string + '.png')
         ########################################### Plot ROC Curve #################################################
         # Predict probabilities for the test set:
         probabilitiesOfClasses = classifierObject.predict_proba(X_test)
@@ -793,12 +796,12 @@ def naiveBayesGaussianUtilizingScikit(data_type, data_path, hyper_parameter_tuni
         falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
         # Plot the ROC Curve of the decision tree predictions and no skill predictions which is a 45-degrees line (since it either predicts positive or negative for all data points) as a reference :
         plt.figure(2)
-        plt.title(label='Receiver Operating Characteristic (ROC) Curve')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
+        plt.title(label='Receiver Operating Characteristic (ROC) Eğrisi')
+        plt.xlabel('Yanlış Pozitif Oranı')
+        plt.ylabel('Doğru Pozitif Oranı')
         plt.plot(falsePosRate_naiveBayes, truePosRate_naiveBayes, label='Naive Bayes, AUC:' + str(naiveBayesAUC), linestyle='solid', linewidth=3)
         plt.scatter(falsePosRate_naiveBayes,truePosRate_naiveBayes, linewidth=0.5)
-        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='No Skill, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
+        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='Algoritma Kullanılmadan, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
         plt.legend(loc=4)
         plt.gca().set_facecolor('#cbced0')
         plt.grid(visible=True, color='#ffffff') 
