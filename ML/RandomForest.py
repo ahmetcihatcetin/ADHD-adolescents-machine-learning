@@ -11,7 +11,7 @@ from scipy.stats import randint
 
 # Modules for Performance Metrics:
 from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 
 # Modules for the Visualisation of the Decision Trees:
 from sklearn.tree import export_graphviz
@@ -773,7 +773,7 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
             FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
             FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
-            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
+            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')) + '\n')
         ###### Create the confusion matrix:
         confusionMatrix = confusion_matrix(y_test,y_pred)
         ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'ConfusionMatrix' + '.png')
@@ -781,12 +781,44 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
         # Gini-based:
         feature_importance = classifierObject.feature_importances_                  # The impurity-based feature importances. Type: ndarray
         sorted_idx = np.argsort(feature_importance)                                 # Perform an indirect quicksort on the feature importances ndarray
-        fig = matplotlib.pyplot.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
-        matplotlib.pyplot.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
-        matplotlib.pyplot.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
-        matplotlib.pyplot.title('Feature Importance', fontsize=20)
-        matplotlib.pyplot.xlabel('Relative Importance to the Model', fontsize=15)
-        matplotlib.pyplot.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'FeatureImportance' + '.png')
+        fig = plt.figure(figsize=(12, 12), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
+        plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
+        plt.yticks(range(len(sorted_idx)), np.array(X_test.columns)[sorted_idx])
+        plt.title('Feature Importance', fontsize=20)
+        plt.xlabel('Relative Importance to the Model', fontsize=15)
+        plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\RandomForest' + data_type_string + 'FeatureImportance' + '.png')
+        ########################################### Plot ROC Curve #################################################
+        # Predict probabilities for the test set:
+        probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+        # Keep probablities for only the positive outcome: ADHD_positive
+        probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+        # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+        noskill_probabilities = [0 for number in range(len(y_test))]
+        # Calculate AUC Scores:
+        randomForestAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+        noSkillAUC = metrics.roc_auc_score(y_test,noskill_probabilities)
+        ## Write AUC score into the performance metrics file:
+        # Open the file in which the performance metrics will be written in append mode:
+        with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("AUC Score: " + str(randomForestAUC))
+        # Calculate the related data which are false positive rate and true positive rate for the test set:
+        falsePosRate_randomForest, truePosRate__randomForest,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
+        # Calculate the related data for 45-degrees line:
+        falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+        # Plot the ROC Curve of the decision tree predictions and no skill predictions which is a 45-degrees line (since it either predicts positive or negative for all data points) as a reference :
+        plt.figure(2)
+        plt.title(label='Receiver Operating Characteristic (ROC) Curve')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.plot(falsePosRate_randomForest, truePosRate__randomForest, label='Random Forest, AUC:' + str(randomForestAUC), linestyle='solid', linewidth=3)
+        plt.scatter(falsePosRate_randomForest,truePosRate__randomForest, linewidth=0.5)
+        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='No Skill, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
+        plt.legend(loc=4)
+        plt.gca().set_facecolor('#cbced0')
+        plt.grid(visible=True, color='#ffffff') 
+        #myPlot = seaborn.objects.Plot().label(x='False Positive Rate', y='True Positive Rate').add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+        # Save the plot on PNG file:
+        plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\ROC_Curve' + data_type_string + '.png')
         ################################### Calculate Performance Metrics END ###################################################
 
         # Visualize the first 3 Decision Trees from the Forest:
@@ -809,6 +841,7 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
         precisionScores = []
         recallScores = []
         fOneScores = []
+        aucScores = []
 
         # Initialize the file which will hold the hyper parameters:
         if hyper_parameter_tuning:
@@ -866,6 +899,16 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             precisionScores.append(metrics.precision_score(y_test, y_pred,average='macro'))
             recallScores.append(metrics.recall_score(y_test, y_pred,average='macro'))
             fOneScores.append(metrics.f1_score(y_test, y_pred,average='macro'))
+            ## Calculate the Area Under Curve for the current fold:
+            # Predict probabilities for the test set:
+            probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+            # Keep probablities for only the positive outcome: ADHD_positive
+            probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+            # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+            noskill_probabilities = [0 for number in range(len(y_test))]
+            # Calculate AUC Scores:
+            randomForestAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+            aucScores.append(randomForestAUC)
         ### Cross-validate: calculate the MEANS
         performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\RandomForest\KFoldPerformanceMetrics' + data_type_string + '.txt'
         # Wipe the content of the preformance metrics file which is the result of the previous execution:
@@ -876,10 +919,11 @@ def randomForestUtilizingScikit(data_type,data_path, hyper_parameter_tuning ,cro
             FileWritten.write("Accuracy: "  + str(np.mean(accuracyScores)) + '\n')
             FileWritten.write("Precision: " + str(np.mean(precisionScores)) + '\n')
             FileWritten.write("Recall: "    + str(np.mean(recallScores)) + '\n')
-            FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)))
+            FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)) + '\n')
+            FileWritten.write("AUC Score: " + str(np.mean(aucScores)))
 
 def main():
-    randomForestUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True, cross_validation=True)
+    randomForestUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=False, cross_validation=False)
     #randomForestUtilizingScikit(data_type='teacher'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv",                                hyper_parameter_tuning=True, cross_validation=False)
     #randomForestUtilizingScikit(data_type='doctors'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv",                                  hyper_parameter_tuning=True, cross_validation=False)
     #randomForestUtilizingScikit(data_type='risk'                                        , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\RiskFactorsData.csv",                                   hyper_parameter_tuning=True, cross_validation=False)
