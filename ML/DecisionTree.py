@@ -15,7 +15,6 @@ from sklearn import metrics
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Import necessary libraries for plotting the ROC Curve:
-import seaborn.objects
 
 # Import necessary libraries for plotting the feature importance plot:
 import matplotlib.pyplot as plt
@@ -745,27 +744,44 @@ def decisionTreeUtilizingScikit(data_type,data_path,cross_validation=False):
             FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
             FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
             FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
-            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
+            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')) + '\n')
 
         ###### Create the confusion matrix:
         confusionMatrix = confusion_matrix(y_test,y_pred)
         ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ConfusionMatrix' + data_type_string + '.png')
 
-        # Plot ROC Curve:
+        ########################################### Plot ROC Curve #################################################
         # Predict probabilities for the test set:
         probabilitiesOfClasses = classifierObject.predict_proba(X_test)
         # Keep probablities for only the positive outcome: ADHD_positive
         probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
         # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
         noskill_probabilities = [0 for number in range(len(y_test))]
+        # Calculate AUC Scores:
+        decisionTreeAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+        noSkillAUC = metrics.roc_auc_score(y_test,noskill_probabilities)
+        ## Write AUC score into the performance metrics file:
+        # Open the file in which the performance metrics will be written in append mode:
+        with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("AUC Score: " + str(decisionTreeAUC))
         # Calculate the related data which are false positive rate and true positive rate for the test set:
         falsePosRate_decisionTree, truePosRate__decisionTree,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
         # Calculate the related data for 45-degrees line:
         falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
-        # Plot the ROC Curve with a 45-degrees line as a reference by utilizing seaborn objects library:
-        myPlot = seaborn.objects.Plot().add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+        # Plot the ROC Curve of the decision tree predictions and no skill predictions which is a 45-degrees line (since it either predicts positive or negative for all data points) as a reference :
+        plt.figure(2)
+        plt.title(label='Receiver Operating Characteristic (ROC) Curve')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.plot(falsePosRate_decisionTree, truePosRate__decisionTree, label='Decision Tree, AUC:' + str(decisionTreeAUC), linestyle='solid', linewidth=3)
+        plt.scatter(falsePosRate_decisionTree,truePosRate__decisionTree, linewidth=0.5)
+        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='No Skill, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
+        plt.legend(loc=4)
+        plt.gca().set_facecolor('#cbced0')
+        plt.grid(visible=True, color='#ffffff') 
+        #myPlot = seaborn.objects.Plot().label(x='False Positive Rate', y='True Positive Rate').add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
         # Save the plot on PNG file:
-        myPlot.save(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ROC_Curve' + data_type_string + '.png')
+        plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\ROC_Curve' + data_type_string + '.png')
         ################################### Calculate Performance Metrics END ###################################################
 
         # Visualize the used decision tree:
@@ -794,6 +810,7 @@ def decisionTreeUtilizingScikit(data_type,data_path,cross_validation=False):
         precisionScores = []
         recallScores = []
         fOneScores = []
+        aucScores = []
         kf = KFold(n_splits=10, shuffle=True)
         for train_indeces, test_indeces in kf.split(X):
             X_train, X_test = X.iloc[train_indeces,:], X.iloc[test_indeces,:]
@@ -809,6 +826,16 @@ def decisionTreeUtilizingScikit(data_type,data_path,cross_validation=False):
             precisionScores.append(metrics.precision_score(y_test, y_pred,average='macro'))
             recallScores.append(metrics.recall_score(y_test, y_pred,average='macro'))
             fOneScores.append(metrics.f1_score(y_test, y_pred,average='macro'))
+            ## Calculate the Area Under Curve for the current fold:
+            # Predict probabilities for the test set:
+            probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+            # Keep probablities for only the positive outcome: ADHD_positive
+            probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+            # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+            noskill_probabilities = [0 for number in range(len(y_test))]
+            # Calculate AUC Scores:
+            decisionTreeAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+            aucScores.append(decisionTreeAUC)
         ### Cross-validate: calculate the MEANS
         performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\DecisionTree\KFoldPerformanceMetrics' + data_type_string + '.txt'
         # Wipe the content of the preformance metrics file which is the result of the previous execution:
@@ -819,7 +846,8 @@ def decisionTreeUtilizingScikit(data_type,data_path,cross_validation=False):
             FileWritten.write("Accuracy: "  + str(np.mean(accuracyScores)) + '\n')
             FileWritten.write("Precision: " + str(np.mean(precisionScores)) + '\n')
             FileWritten.write("Recall: "    + str(np.mean(recallScores)) + '\n')
-            FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)))
+            FileWritten.write("F-1 Score: " + str(np.mean(fOneScores)) + '\n')
+            FileWritten.write("AUC Score: " + str(np.mean(aucScores)))
 
 def main():
     decisionTreeUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                             cross_validation=False)

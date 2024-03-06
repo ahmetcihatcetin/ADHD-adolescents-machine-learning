@@ -792,17 +792,41 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             FileWritten.write("Accuracy: "  + str(metrics.accuracy_score(y_test, y_pred)) + '\n')
             FileWritten.write("Precision: " + str(metrics.precision_score(y_test, y_pred,average='macro')) + '\n')
             FileWritten.write("Recall: "    + str(metrics.recall_score(y_test, y_pred,average='macro')) + '\n')
-            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')))
+            FileWritten.write("F-1 Score: " + str(metrics.f1_score(y_test, y_pred,average='macro')) + '\n')
         ###### Create the confusion matrix:
         confusionMatrix = confusion_matrix(y_test,y_pred)
         ConfusionMatrixDisplay(confusion_matrix=confusionMatrix).plot().figure_.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ConfusionMatrix' + data_type_string + '.png')
-        ###### Plot the ROC Curve:
-        y_pred_proba = classifierObject.predict_proba(X_test)[::,1]
-        fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba, pos_label='ADHD_positive')
-        auc = metrics.roc_auc_score(y_test, y_pred_proba)
+        ########################################### Plot ROC Curve #################################################
+        # Predict probabilities for the test set:
+        probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+        # Keep probablities for only the positive outcome: ADHD_positive
+        probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+        # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+        noskill_probabilities = [0 for number in range(len(y_test))]
+        # Calculate AUC Scores:
+        logisticRegressionAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+        noSkillAUC = metrics.roc_auc_score(y_test,noskill_probabilities)
+        ## Write AUC score into the performance metrics file:
+        # Open the file in which the performance metrics will be written in append mode:
+        with open(performanceMetricsFilePath,'a',newline='',encoding='UTF-8') as FileWritten:
+            FileWritten.write("AUC Score: " + str(logisticRegressionAUC))
+        # Calculate the related data which are false positive rate and true positive rate for the test set:
+        falsePosRate_logisticRegression, truePosRate_logisticRegression,_ = metrics.roc_curve(y_test, probabilitiesOfClasses_pos_class, pos_label='ADHD_positive')
+        # Calculate the related data for 45-degrees line:
+        falsePosRate_noSkill, truePosRate_noSkill,_ = metrics.roc_curve(y_test, noskill_probabilities, pos_label='ADHD_positive')
+        # Plot the ROC Curve of the decision tree predictions and no skill predictions which is a 45-degrees line (since it either predicts positive or negative for all data points) as a reference :
         plt.figure(2)
-        plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+        plt.title(label='Receiver Operating Characteristic (ROC) Curve')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.plot(falsePosRate_logisticRegression, truePosRate_logisticRegression, label='Logistic Regression, AUC:' + str(logisticRegressionAUC), linestyle='solid', linewidth=3)
+        plt.scatter(falsePosRate_logisticRegression,truePosRate_logisticRegression, linewidth=0.5)
+        plt.plot(falsePosRate_noSkill, truePosRate_noSkill, label='No Skill, AUC:' + str(noSkillAUC), linestyle='dashed', linewidth=2)
         plt.legend(loc=4)
+        plt.gca().set_facecolor('#cbced0')
+        plt.grid(visible=True, color='#ffffff') 
+        #myPlot = seaborn.objects.Plot().label(x='False Positive Rate', y='True Positive Rate').add(seaborn.objects.Line(color='red'),x=falsePosRate_decisionTree, y=truePosRate__decisionTree).add(seaborn.objects.Line(color='blue',linestyle='dashed'),x=falsePosRate_noSkill, y=truePosRate_noSkill).layout(size=(8,5))
+        # Save the plot on PNG file:
         plt.savefig(r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\ROC_Curve' + data_type_string + '.png')
         ################################### END OF Performance Metrics #########################################################
     elif cross_validation == True:
@@ -811,7 +835,7 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
         precisionScores = []
         recallScores = []
         fOneScores = []
-
+        aucScores = []
         # Initialize the file which will hold hyper parameters:
         if hyper_parameter_tuning:
             hyperParameterFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\KFoldHyperParameters' + data_type_string + '.txt'
@@ -881,7 +905,16 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             precisionScores.append(metrics.precision_score(y_test, y_pred,average='macro'))
             recallScores.append(metrics.recall_score(y_test, y_pred,average='macro'))
             fOneScores.append(metrics.f1_score(y_test, y_pred,average='macro'))
-
+            ## Calculate the Area Under Curve for the current fold:
+            # Predict probabilities for the test set:
+            probabilitiesOfClasses = classifierObject.predict_proba(X_test)
+            # Keep probablities for only the positive outcome: ADHD_positive
+            probabilitiesOfClasses_pos_class = probabilitiesOfClasses[:,1]    
+            # Generate probabilities for 45-degrees line (45-degrees line will be used as a reference!)
+            noskill_probabilities = [0 for number in range(len(y_test))]
+            # Calculate AUC Scores:
+            logisticRegressionAUC = metrics.roc_auc_score(y_test, probabilitiesOfClasses_pos_class)
+            aucScores.append(logisticRegressionAUC)
         ### Cross-validate: calculate the MEANS
         performanceMetricsFilePath = r'C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\Output\LogisticRegression\KFoldPerformanceMetrics' + data_type_string + '.txt'
         # Wipe the content of the preformance metrics file which is the result of the previous execution:
@@ -892,7 +925,8 @@ def logisticRegressionUtilizingScikit(data_type, data_path, hyper_parameter_tuni
             FileWritten.write("Accuracy: "  + str(mean(accuracyScores)) + '\n')
             FileWritten.write("Precision: " + str(mean(precisionScores)) + '\n')
             FileWritten.write("Recall: "    + str(mean(recallScores)) + '\n')
-            FileWritten.write("F-1 Score: " + str(mean(fOneScores)))   
+            FileWritten.write("F-1 Score: " + str(mean(fOneScores)) + '\n')
+            FileWritten.write("AUC Score: " + str(mean(aucScores)))  
 
 def main():
     logisticRegressionUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=False, search_type='grid', cross_validation=False)
