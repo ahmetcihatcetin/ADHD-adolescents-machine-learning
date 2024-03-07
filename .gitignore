@@ -15,3 +15,5 @@ settings.json
 launch.json
 # Ignore performance metrics files for pre-evaluation:
 /PerformanceMetricsForPreEvaluation/*
+# Ignore performance metrics files for analysis:
+/PerformanceMetricsForAnalysis/*

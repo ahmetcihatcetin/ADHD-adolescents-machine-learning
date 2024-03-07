@@ -723,9 +723,10 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
         if hyper_parameter_tuning:
             if search_type == 'randomized': ### Tuning with Randomized Search ##############
                 # Create dictionary for the hyper parameters which we want to optimize:
-                hyperParameters = {'C':         uniform(0.1, 10), 
-                                   'gamma':     ['scale', 'auto'] + list(logspace(-3, 3, 50)),
-                                   'kernel':    ['linear', 'rbf', 'poly', 'sigmoid']}
+                hyperParameters = {'C':             uniform(0.1, 10), 
+                                   'gamma':         ['scale', 'auto'] + list(logspace(-3, 3, 50)),
+                                   'kernel':        ['linear', 'rbf', 'poly', 'sigmoid'],
+                                   'probability':   [True]}
                 # Create a SVM classifier which will be used for optimization:
                 supportVectorMachineModel = svm.SVC()
                 # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
@@ -746,9 +747,10 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
 
             else:       #################################### Tuning with Grid Search #######
                 # Create dictionary for the hyper parameters which we want to optimize:
-                hyperParameters = {'C':         [0.1,1, 10, 100], 
-                                   'gamma':     [1,0.1,0.01,0.001],
-                                   'kernel':    ['rbf', 'poly', 'sigmoid']}
+                hyperParameters = {'C':             [0.1,1, 10, 100], 
+                                   'gamma':         [1,0.1,0.01,0.001],
+                                   'kernel':        ['rbf', 'poly', 'sigmoid'],
+                                   'probability':   [True]}
                 # Create a SVM classifier which will be used for optimization:
                 supportVectorMachineModel = svm.SVC()
                 # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
@@ -812,7 +814,7 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
         sorted_idx = perm_importance_normalized.argsort()
         # Plot:
         fig = plt.figure(figsize=(16, 16), layout='compressed')       # Create & initialize a figure with a size of 12x12 inches and a compressed layout
-        plt.title('Maddelerim Permutasyonsal Önem Sıralaması',fontsize=20)
+        plt.title('Maddelerin Permutasyonsal Önem Sıralaması',fontsize=20)
         plt.barh(features[sorted_idx], perm_importance_normalized[sorted_idx], color='b', align='center')
         plt.xlabel('Maddenin Modele Kıyasla Önemi', fontsize=15)
         plt.xticks(fontsize=15)
@@ -871,9 +873,10 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             if hyper_parameter_tuning:
                 if search_type == 'randomized': ### Tuning with Randomized Search ##############
                     # Create dictionary for the hyper parameters which we want to optimize:
-                    hyperParameters = {'C':         uniform(0.1, 10), 
-                                       'gamma':     ['scale', 'auto'] + list(logspace(-3, 3, 50)),
-                                       'kernel':    ['linear', 'rbf', 'poly', 'sigmoid']}
+                    hyperParameters = {'C':             uniform(0.1, 10), 
+                                       'gamma':         ['scale', 'auto'] + list(logspace(-3, 3, 50)),
+                                       'kernel':        ['linear', 'rbf', 'poly', 'sigmoid'],
+                                       'probability':   [True]}
                     # Create a SVM classifier which will be used for optimization:
                     supportVectorMachineModel = svm.SVC()
                     # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
@@ -890,9 +893,10 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
 
                 else:       #################################### Tuning with Grid Search #######
                     # Create dictionary for the hyper parameters which we want to optimize:
-                    hyperParameters = {'C':         [0.1,1, 10, 100], 
-                                       'gamma':     [1,0.1,0.01,0.001],
-                                       'kernel':    ['rbf', 'poly', 'sigmoid']}
+                    hyperParameters = {'C':             [0.1,1, 10, 100], 
+                                       'gamma':         [1,0.1,0.01,0.001],
+                                       'kernel':        ['rbf', 'poly', 'sigmoid'],
+                                       'probability':   [True]}
                     # Create a SVM classifier which will be used for optimization:
                     supportVectorMachineModel = svm.SVC()
                     # Utilize the random search function provided by Scikit-learn in order to find the best hyperparameters:
@@ -946,15 +950,15 @@ def supportVectorMachinesUtilizingScikit(data_type,data_path, hyper_parameter_tu
             FileWritten.write("AUC Score: " + str(np.mean(aucScores)))              
 
 def main():
-    supportVectorMachinesUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='parent'                                      , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersParentData.csv",                                 hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
     #supportVectorMachinesUtilizingScikit(data_type='teacher'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersTeacherData.csv",                                hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
     #supportVectorMachinesUtilizingScikit(data_type='doctors'                                     , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\DoctorsNotesData.csv",                                  hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
     #supportVectorMachinesUtilizingScikit(data_type='risk'                                        , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\RiskFactorsData.csv",                                   hyper_parameter_tuning=False,  search_type='randomized', cross_validation=False)
     #supportVectorMachinesUtilizingScikit(data_type='combinedConnersParentAndTeacher'             , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\ConnersData.csv",                                       hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
-    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotes'              , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotes.csv",                    hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
-    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndRiskFactors'               , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndRiskFactors.csv",                     hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
-    #supportVectorMachinesUtilizingScikit(data_type='combinedDoctorsNotesAndRiskFactors'          , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDoctorsNotesAndRiskFactors.csv",                hyper_parameter_tuning=False,   search_type='randomized', cross_validation=False)
-    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotesAndRiskFactors', data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotesAndRiskFactors.csv",      hyper_parameter_tuning=True,   search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotes'              , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotes.csv",                    hyper_parameter_tuning=True,   search_type='randomized', cross_validation=True)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndRiskFactors'               , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndRiskFactors.csv",                     hyper_parameter_tuning=False,  search_type='randomized', cross_validation=False)
+    #supportVectorMachinesUtilizingScikit(data_type='combinedDoctorsNotesAndRiskFactors'          , data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedDoctorsNotesAndRiskFactors.csv",                hyper_parameter_tuning=False,  search_type='randomized', cross_validation=False)
+    supportVectorMachinesUtilizingScikit(data_type='combinedConnersAndDoctorsNotesAndRiskFactors', data_path=r"C:\Users\ahmet\Documents\ADHD Machine Learning\ADHD-adolescents-machine-learning\Data\CombinedConnersAndDoctorsNotesAndRiskFactors.csv",      hyper_parameter_tuning=False,  search_type='grid', cross_validation=False)
 
 if __name__ == "__main__":
     main()
